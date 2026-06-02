@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { pools } from '@/lib/pools';
 import { dayjs } from '@/lib/time';
 import { Toggle } from '@/components/ui/Toggle';
@@ -8,7 +9,12 @@ import { Header } from '@/components/layout/Header';
 import { TabBar } from '@/components/layout/TabBar';
 import { IconChevronRight } from '@/components/ui/icons';
 
-const MENU = ['내 제보 내역', '데이터 기준 안내', '의견 보내기'];
+const MENU: { label: string; href?: string }[] = [
+  { label: '내 제보 내역' },
+  { label: '데이터 기준 안내' },
+  { label: '의견 보내기' },
+  { label: '개인정보처리방침', href: '/privacy' },
+];
 
 /** 더보기 (Figma More 5:134 바인딩) — 설정·메뉴·데이터 기준 안내 */
 export default function MorePage() {
@@ -36,18 +42,34 @@ export default function MorePage() {
 
         {/* 메뉴 */}
         <div className="rounded-input bg-surface px-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
-          {MENU.map((label, i) => (
-            <div key={label}>
-              <button
-                type="button"
-                className="flex w-full items-center justify-between py-4 text-left"
-              >
+          {MENU.map(({ label, href }, i) => {
+            const inner = (
+              <>
                 <span className="text-body text-text">{label}</span>
                 <IconChevronRight className="size-5 text-text-sub" />
-              </button>
-              {i < MENU.length - 1 && <div className="h-px bg-line" />}
-            </div>
-          ))}
+              </>
+            );
+            return (
+              <div key={label}>
+                {href ? (
+                  <Link
+                    href={href}
+                    className="flex w-full items-center justify-between py-4 text-left"
+                  >
+                    {inner}
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    className="flex w-full items-center justify-between py-4 text-left"
+                  >
+                    {inner}
+                  </button>
+                )}
+                {i < MENU.length - 1 && <div className="h-px bg-line" />}
+              </div>
+            );
+          })}
         </div>
 
         {/* 데이터 기준 안내 */}
