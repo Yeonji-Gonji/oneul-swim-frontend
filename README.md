@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 오늘수영 (oneul-swim)
 
-## Getting Started
+하남 자유수영 정보앱 MVP. 권역별 수영장의 **지금 자유수영 가능 여부 · 요금 · 위치**를 한눈에 보여준다.
 
-First, run the development server:
+- **스택**: Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Kakao Maps · PWA
+- **데이터**: 정적 JSON (`data/pools.json`, `data/private-pools.json`)
+- **패키지 매니저**: pnpm
+
+## 개발
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
+pnpm dev          # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+환경변수는 `.env.local` 에 둔다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+NEXT_PUBLIC_KAKAO_MAP_KEY=<카카오 JavaScript 키>
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+> 키가 없거나 도메인 미등록(401)이면 지도는 **권역 핀 버튼 폴백**으로 동작한다. 앱은 키 없이도 빌드·구동된다.
 
-## Learn More
+## 스크립트
 
-To learn more about Next.js, take a look at the following resources:
+| 명령 | 설명 |
+|---|---|
+| `pnpm dev` | 개발 서버 |
+| `pnpm build` | 프로덕션 빌드 |
+| `pnpm start` | 빌드 결과 실행 |
+| `pnpm lint` | ESLint |
+| `pnpm typecheck` | `tsc --noEmit` 타입 검사 |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## CI/CD
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **CI** — `.github/workflows/ci.yml`. `main` 푸시 및 PR마다 **lint → typecheck → build** 게이트 실행.
+- **CD** — Vercel GitHub 연동. `main` 푸시 시 프로덕션 자동 배포, PR마다 프리뷰 URL 생성.
 
-## Deploy on Vercel
+### Vercel 최초 연동 (1회)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. [vercel.com/new](https://vercel.com/new) → `MODAC0/oneul-swim` Import (프레임워크 Next.js 자동 감지, 빌드 설정 그대로).
+2. **Environment Variables** 에 `NEXT_PUBLIC_KAKAO_MAP_KEY` 추가 (Production · Preview).
+3. Deploy. 이후 푸시마다 자동 배포.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 카카오 도메인 등록
+
+[Kakao Developers](https://developers.kakao.com) → 내 애플리케이션 → 플랫폼 → Web 사이트 도메인에 배포 도메인(`https://<프로젝트>.vercel.app` 및 커스텀 도메인)을 추가해야 지도가 뜬다.
+
+### GitHub Actions 시크릿 (선택)
+
+CI 빌드에서도 지도 키를 쓰려면 리포지토리 **Settings → Secrets → Actions** 에 `NEXT_PUBLIC_KAKAO_MAP_KEY` 등록. 미등록이어도 빌드는 통과한다.

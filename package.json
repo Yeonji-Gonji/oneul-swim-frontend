@@ -6,8 +6,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "typecheck": "tsc --noEmit"
   },
+  "packageManager": "pnpm@10.13.1",
   "dependencies": {
     "dayjs": "^1.11.21",
     "next": "16.2.6",

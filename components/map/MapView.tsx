@@ -40,14 +40,14 @@ export function MapView() {
     if (!KEY || !mapEl.current) return;
     const id = 'kakao-map-sdk';
     const init = () => {
-      const kakao = (window as any).kakao;
+      const kakao = window.kakao;
       if (!kakao?.maps) {
         setFailed(true); // 401 등으로 SDK 미정의 → 폴백
         return;
       }
       kakao.maps.load(() => {
         const center = new kakao.maps.LatLng(37.5419, 127.1956);
-        const map = new kakao.maps.Map(mapEl.current, { center, level: 7 });
+        const map = new kakao.maps.Map(mapEl.current!, { center, level: 7 });
         const bounds = new kakao.maps.LatLngBounds();
         pools.forEach((p) => {
           if (p.lat == null || p.lng == null) return;
@@ -66,7 +66,7 @@ export function MapView() {
         map.setBounds(bounds); // 4개 핀이 한눈에 들어오도록 영역 맞춤
       });
     };
-    if ((window as any).kakao?.maps) return init();
+    if (window.kakao?.maps) return init();
     if (document.getElementById(id)) return;
     const s = document.createElement('script');
     s.id = id;
