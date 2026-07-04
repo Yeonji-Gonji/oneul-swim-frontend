@@ -44,3 +44,32 @@ self.addEventListener('fetch', (event) => {
     ),
   );
 });
+
+/* ---- Web Push: 아침 요약 알림 ---- */
+self.addEventListener('push', (event) => {
+  let data = { title: '오늘수영', body: '' };
+  try {
+    data = event.data.json();
+  } catch {
+    /* 페이로드가 JSON이 아니면 기본값 사용 */
+  }
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: '/icon-192.png',
+      badge: '/icon-192.png',
+      data: { url: '/' },
+    }),
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    self.clients.matchAll({ type: 'window', includeUncontrolled: true }).then((clients) => {
+      const existing = clients.find((c) => 'focus' in c);
+      if (existing) return existing.focus();
+      return self.clients.openWindow('/');
+    }),
+  );
+});

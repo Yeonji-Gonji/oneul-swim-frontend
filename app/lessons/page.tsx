@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { pools } from '@/lib/pools';
 import { formatWon } from '@/lib/format';
 import { Toggle } from '@/components/ui/Toggle';
@@ -11,8 +11,21 @@ import { TabBar } from '@/components/layout/TabBar';
  * 강습 등록일 알림 (Figma Lessons 5:89 바인딩).
  * ⚠️ 강습 '등록일(D-day)'은 검증 데이터에 없어(예약시스템 전용) 날조하지 않는다.
  *    실제 강습 정보로 카드를 채우고 등록일은 "시설 확인" 표기 + 알림 구독 토글 제공.
- *    구독/알림 상태는 현재 로컬 전용 — TODO: localStorage/푸시 백엔드(v1.5).
+ *    구독/알림 상태는 localStorage에 저장된다 (등록일 데이터 확보 전까지의 v1.5).
  */
+const STORAGE_KEY = 'oneul-swim:lesson-alerts';
+
+function loadSaved(): { alerts: Record<string, boolean>; subs: Record<string, boolean> } {
+  try {
+    return {
+      alerts: {},
+      subs: {},
+      ...JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '{}'),
+    };
+  } catch {
+    return { alerts: {}, subs: {} };
+  }
+}
 export default function LessonsPage() {
   // 시설별 대표 강습 1개씩 (실데이터)
   const featured = pools
@@ -21,6 +34,23 @@ export default function LessonsPage() {
 
   const [alerts, setAlerts] = useState<Record<string, boolean>>({});
   const [subs, setSubs] = useState<Record<string, boolean>>({});
+
+  const [restored, setRestored] = useState(false);
+
+  // 저장된 토글 상태를 먼저 복원하고, 그 이후의 변경만 저장한다
+  useEffect(() => {
+    const saved = loadSaved();
+    // localStorage는 서버에 없어 lazy 초기화 시 하이드레이션 불일치가 나므로
+    // 마운트 후 1회 복원이 의도된 패턴이다 (cascading render 아님)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setAlerts(saved.alerts);
+    setSubs(saved.subs);
+    setRestored(true);
+  }, []);
+  useEffect(() => {
+    if (!restored) return;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ alerts, subs }));
+  }, [restored, alerts, subs]);
 
   return (
     <>

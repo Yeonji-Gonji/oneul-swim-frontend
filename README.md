@@ -17,11 +17,13 @@ pnpm dev          # http://localhost:3000
 
 ```bash
 NEXT_PUBLIC_KAKAO_MAP_KEY=<카카오 JavaScript 키>
-NEXT_PUBLIC_API_URL=<oneul-swim-api 주소, 예: https://api.example.com>
+NEXT_PUBLIC_API_URL=<oneul-swim-backend 주소, 예: https://api.example.com>
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=<백엔드와 짝인 Web Push 공개키>
 ```
 
 > 키가 없거나 도메인 미등록(401)이면 지도는 **권역 핀 버튼 폴백**으로 동작한다. 앱은 키 없이도 빌드·구동된다.
 > `NEXT_PUBLIC_API_URL`이 없으면 제보는 전송 없이 접수 UX만 동작한다(정적 MVP 폴백).
+> 푸시 키가 없으면 아침 요약 토글이 "서버 준비 중" 안내로 동작한다.
 
 ## 스크립트
 

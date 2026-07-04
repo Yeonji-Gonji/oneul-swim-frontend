@@ -1,24 +1,53 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { pools } from '@/lib/pools';
 import { dayjs } from '@/lib/time';
 import { Toggle } from '@/components/ui/Toggle';
 import { Header } from '@/components/layout/Header';
 import { TabBar } from '@/components/layout/TabBar';
+import { FeedbackSheet } from '@/components/report/FeedbackSheet';
 import { IconChevronRight } from '@/components/ui/icons';
+import {
+  disablePush,
+  enablePush,
+  getPushEnabled,
+  isPushSupported,
+} from '@/lib/push';
 
-const MENU: { label: string; href?: string }[] = [
-  { label: '내 제보 내역' },
-  { label: '데이터 기준 안내' },
-  { label: '의견 보내기' },
-  { label: '개인정보처리방침', href: '/privacy' },
-];
+const PUSH_ERROR_MESSAGE: Record<string, string> = {
+  unsupported: '이 브라우저는 푸시 알림을 지원하지 않아요.',
+  denied: '알림 권한이 꺼져 있어요. 브라우저 설정에서 허용해 주세요.',
+  'no-backend': '알림 서버 준비 중이에요. 잠시 후 다시 시도해 주세요.',
+  network: '설정에 실패했어요. 잠시 후 다시 시도해 주세요.',
+};
 
 /** 더보기 (Figma More 5:134 바인딩) — 설정·메뉴·데이터 기준 안내 */
 export default function MorePage() {
   const [morning, setMorning] = useState(false);
+  const [pushBusy, setPushBusy] = useState(false);
+  const [pushError, setPushError] = useState<string | null>(null);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+
+  // 구독 여부의 진실은 브라우저 pushManager에 있다
+  useEffect(() => {
+    getPushEnabled().then(setMorning);
+  }, []);
+
+  const toggleMorning = async (next: boolean) => {
+    if (pushBusy) return;
+    setPushBusy(true);
+    setPushError(null);
+    const result = next ? await enablePush() : await disablePush();
+    if (result.ok) {
+      setMorning(next);
+    } else {
+      setPushError(PUSH_ERROR_MESSAGE[result.reason]);
+    }
+    setPushBusy(false);
+  };
+
   const lastUpdated = pools
     .map((p) => p.updatedAt)
     .sort()
@@ -36,24 +65,43 @@ export default function MorePage() {
               <span className="text-body text-text">오늘 자유수영 아침 요약</span>
               <span className="text-xs text-text-sub">매일 오전 8시 푸시</span>
             </div>
-            <Toggle on={morning} onChange={setMorning} label="아침 요약 푸시" />
+            <Toggle
+              on={morning}
+              onChange={toggleMorning}
+              label="아침 요약 푸시"
+            />
           </div>
+          {pushError && (
+            <p className="mt-3 text-xs leading-relaxed text-red-500">
+              {pushError}
+            </p>
+          )}
+          {!isPushSupported() && !pushError && (
+            <p className="mt-3 text-xs leading-relaxed text-text-sub">
+              iOS는 홈 화면에 추가한 앱에서만 알림을 받을 수 있어요.
+            </p>
+          )}
         </div>
 
         {/* 메뉴 */}
         <div className="rounded-input bg-surface px-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
-          {MENU.map(({ label, href }, i) => {
+          {[
+            { label: '내 제보 내역', href: '/reports' },
+            { label: '데이터 기준 안내', href: '/data-policy' },
+            { label: '의견 보내기', onClick: () => setFeedbackOpen(true) },
+            { label: '개인정보처리방침', href: '/privacy' },
+          ].map((item, i, arr) => {
             const inner = (
               <>
-                <span className="text-body text-text">{label}</span>
+                <span className="text-body text-text">{item.label}</span>
                 <IconChevronRight className="size-5 text-text-sub" />
               </>
             );
             return (
-              <div key={label}>
-                {href ? (
+              <div key={item.label}>
+                {'href' in item && item.href ? (
                   <Link
-                    href={href}
+                    href={item.href}
                     className="flex w-full items-center justify-between py-4 text-left"
                   >
                     {inner}
@@ -61,12 +109,13 @@ export default function MorePage() {
                 ) : (
                   <button
                     type="button"
+                    onClick={item.onClick}
                     className="flex w-full items-center justify-between py-4 text-left"
                   >
                     {inner}
                   </button>
                 )}
-                {i < MENU.length - 1 && <div className="h-px bg-line" />}
+                {i < arr.length - 1 && <div className="h-px bg-line" />}
               </div>
             );
           })}
@@ -86,6 +135,8 @@ export default function MorePage() {
           </p>
         </div>
       </main>
+
+      <FeedbackSheet open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
       <TabBar active="more" />
     </>
   );
