@@ -76,7 +76,7 @@ export default async function PoolDetailPage({
         강습 등록일 알림 받기
       </Link>
 
-      <ReportSheet poolName={pool.name} />
+      <ReportSheet poolId={pool.id} poolName={pool.name} />
     </main>
   );
 }
