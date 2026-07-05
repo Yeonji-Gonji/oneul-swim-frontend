@@ -20,11 +20,28 @@ export function isPushConfigured(): boolean {
   return Boolean(API_URL && VAPID_PUBLIC_KEY);
 }
 
-/** 현재 브라우저가 구독 중인지 */
+/** 현재 브라우저가 구독 중인지 (등록된 SW가 없으면 구독도 없음) */
 export async function getPushEnabled(): Promise<boolean> {
   if (!isPushSupported()) return false;
-  const reg = await navigator.serviceWorker.ready;
+  const reg = await navigator.serviceWorker.getRegistration();
+  if (!reg) return false;
   return Boolean(await reg.pushManager.getSubscription());
+}
+
+/**
+ * 활성 서비스워커 확보. register는 멱등이라 안전하고,
+ * `serviceWorker.ready`는 실패 시 영원히 pending이라 시간제한을 건다.
+ */
+async function readyRegistration(): Promise<ServiceWorkerRegistration | null> {
+  try {
+    await navigator.serviceWorker.register('/sw.js');
+    return await Promise.race([
+      navigator.serviceWorker.ready,
+      new Promise<null>((resolve) => setTimeout(() => resolve(null), 10_000)),
+    ]);
+  } catch {
+    return null;
+  }
 }
 
 export type PushResult =
@@ -39,12 +56,14 @@ export async function enablePush(): Promise<PushResult> {
   if (permission !== 'granted') return { ok: false, reason: 'denied' };
 
   try {
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await readyRegistration();
+    if (!reg) return { ok: false, reason: 'network' };
     const subscription =
       (await reg.pushManager.getSubscription()) ??
       (await reg.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY!),
+        // 대시보드에 붙여넣은 키의 공백·개행에 관대하게
+        applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY!.trim()),
       }));
 
     const res = await fetch(`${API_URL}/subscriptions`, {
@@ -62,7 +81,8 @@ export async function enablePush(): Promise<PushResult> {
 export async function disablePush(): Promise<PushResult> {
   if (!isPushSupported()) return { ok: false, reason: 'unsupported' };
   try {
-    const reg = await navigator.serviceWorker.ready;
+    const reg = await navigator.serviceWorker.getRegistration();
+    if (!reg) return { ok: true }; // SW가 없으면 구독도 없다
     const subscription = await reg.pushManager.getSubscription();
     if (subscription) {
       // 서버 목록에서 먼저 제거 (실패해도 다음 발송 때 410으로 자동 정리됨)

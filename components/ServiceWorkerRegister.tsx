@@ -6,13 +6,19 @@ import { useEffect } from 'react';
 export function ServiceWorkerRegister() {
   useEffect(() => {
     if (!('serviceWorker' in navigator)) return;
-    const onLoad = () => {
+    const register = () => {
       navigator.serviceWorker.register('/sw.js').catch((err) => {
         console.error('[PWA] Service Worker 등록 실패', err);
       });
     };
-    window.addEventListener('load', onLoad);
-    return () => window.removeEventListener('load', onLoad);
+    // 하이드레이션이 load 이후에 끝나면 load 리스너는 영영 안 불린다 —
+    // 이미 로드가 끝난 상태면 즉시 등록한다
+    if (document.readyState === 'complete') {
+      register();
+      return;
+    }
+    window.addEventListener('load', register);
+    return () => window.removeEventListener('load', register);
   }, []);
 
   return null;
