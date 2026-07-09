@@ -1,12 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
-import {
-  pools,
-  getPoolNowStatus,
-  sortPoolsByStatus,
-  type NowStatus,
-} from '@/lib/pools';
+import { getPoolNowStatus, sortPoolsByStatus, type NowStatus } from '@/lib/pools';
+import type { FreeSwimTier, Pool, PriceByTarget } from '@/lib/types';
 import { nowInSeoul, type Dayjs } from '@/lib/time';
 import { Button } from '@/components/ui/Button';
 import { IconMoon } from '@/components/ui/icons';
@@ -15,9 +11,16 @@ import { PoolCard } from './PoolCard';
 
 /**
  * 홈 인터랙티브 영역 — 필터 칩 + 요약 + 시설 리스트.
+ * 데이터(pools/priceTiers)는 서버 컴포넌트가 API 우선 로더로 읽어 주입한다(폴백 시 정적).
  * "지금 상태"는 클라이언트에서 사용자 시계(Asia/Seoul) 기준 계산, 1분마다 갱신.
  */
-export function HomeClient() {
+export function HomeClient({
+  pools,
+  priceTiers,
+}: {
+  pools: Pool[];
+  priceTiers: Record<FreeSwimTier, PriceByTarget>;
+}) {
   const [filter, setFilter] = useState<PoolFilter>('now');
   const [now, setNow] = useState<Dayjs>(() => nowInSeoul());
 
@@ -48,7 +51,7 @@ export function HomeClient() {
       openCount: count('open'),
       soonCount: count('soon'),
     };
-  }, [filter, now]);
+  }, [filter, now, pools]);
 
   // '지금 가능' 필터인데 지금 열린 곳이 없을 때 — 리치 empty (Figma Home/지금0곳)
   const emptyNow = filter === 'now' && openCount === 0;
@@ -87,7 +90,12 @@ export function HomeClient() {
           {visible.length > 0 ? (
             <div className="flex flex-col gap-3">
               {visible.map((pool) => (
-                <PoolCard key={pool.id} pool={pool} now={now} />
+                <PoolCard
+                  key={pool.id}
+                  pool={pool}
+                  now={now}
+                  priceTiers={priceTiers}
+                />
               ))}
             </div>
           ) : (

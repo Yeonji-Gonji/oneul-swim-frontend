@@ -1,10 +1,15 @@
-import type { Pool } from '@/lib/types';
-import { priceTiers } from '@/lib/pools';
+import type { FreeSwimTier, Pool, PriceByTarget } from '@/lib/types';
 import { dayjs } from '@/lib/time';
 import { formatWon as won } from '@/lib/format';
 
-/** 자유수영 이용권 요금 카드 (Figma Detail 바인딩) */
-export function FeeCard({ pool }: { pool: Pool }) {
+/** 자유수영 이용권 요금 카드 (Figma Detail 바인딩). 요금표는 API 우선 로더가 주입 */
+export function FeeCard({
+  pool,
+  priceTiers,
+}: {
+  pool: Pool;
+  priceTiers: Record<FreeSwimTier, PriceByTarget>;
+}) {
   const tiers = new Set(pool.freeSwim.sessions.map((s) => s.tier));
   const pass = pool.freeSwim.monthlyPass;
   return (

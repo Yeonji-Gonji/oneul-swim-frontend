@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { getPoolById, getPoolNowStatus } from '@/lib/pools';
+import { getPoolNowStatus } from '@/lib/pools';
+import { getPoolsData } from '@/lib/pools-data';
 import { nowInSeoul } from '@/lib/time';
 import { Header } from '@/components/layout/Header';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -24,7 +25,8 @@ export default async function PoolDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const pool = getPoolById(id);
+  const { pools, freeSwimPriceTiers } = await getPoolsData();
+  const pool = pools.find((p) => p.id === id);
   if (!pool) redirect('/');
 
   const now = nowInSeoul();
@@ -51,7 +53,7 @@ export default async function PoolDetailPage({
 
       <DaySchedule pool={pool} />
 
-      <FeeCard pool={pool} />
+      <FeeCard pool={pool} priceTiers={freeSwimPriceTiers} />
 
       <div className="flex w-full gap-2.5">
         <a href={`tel:${pool.phone}`} className={cn(buttonClass('medium'), 'flex-1')}>
@@ -73,7 +75,7 @@ export default async function PoolDetailPage({
 
       <Link href="/lessons" className={buttonClass('solid')}>
         <IconBell className="size-4.5" />
-        강습 등록일 알림 받기
+        강습 접수 소식 알림 받기
       </Link>
 
       <ReportSheet poolId={pool.id} poolName={pool.name} />

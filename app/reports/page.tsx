@@ -16,6 +16,8 @@ interface MyReport {
   content: string;
   status: 'PENDING' | 'APPLIED' | 'REJECTED';
   createdAt: string;
+  /** 어드민이 상태를 바꾼 시각(있으면 처리 시각으로 표시) */
+  updatedAt?: string;
 }
 
 const STATUS_BADGE: Record<
@@ -25,6 +27,13 @@ const STATUS_BADGE: Record<
   PENDING: { label: '확인 중', className: 'bg-closed-soft text-closed-ink' },
   APPLIED: { label: '반영됨', className: 'bg-now-open-soft text-now-open-ink' },
   REJECTED: { label: '반영 불가', className: 'bg-closed-soft text-closed-ink' },
+};
+
+/** 처리 상태별 안내 한 줄 — 제보 루프가 닫혔음을 사용자에게 확인시킨다 */
+const STATUS_HINT: Record<MyReport['status'], string> = {
+  PENDING: '운영자가 확인하고 있어요.',
+  APPLIED: '제보해 주신 내용이 정보에 반영됐어요. 감사합니다!',
+  REJECTED: '확인 결과 반영하지 않았어요. 다른 제보는 언제든 환영해요.',
 };
 
 /** 시설명 표시: 앱 의견은 시설이 아니므로 별도 라벨 */
@@ -73,10 +82,13 @@ export default function MyReportsPage() {
 
         {reports?.map((r) => {
           const badge = STATUS_BADGE[r.status];
+          const applied = r.status === 'APPLIED';
           return (
             <div
               key={r.id}
-              className="flex flex-col gap-2 rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]"
+              className={`flex flex-col gap-2 rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)] ${
+                applied ? 'ring-2 ring-now-open' : ''
+              }`}
             >
               <div className="flex items-start justify-between gap-3">
                 <span className="text-body font-bold text-text">
@@ -92,8 +104,18 @@ export default function MyReportsPage() {
                 {r.reason}
                 {r.content && ` · ${r.content}`}
               </span>
+              <span
+                className={`text-[13px] leading-relaxed ${
+                  applied ? 'font-bold text-now-open-ink' : 'text-text-sub'
+                }`}
+              >
+                {STATUS_HINT[r.status]}
+              </span>
               <span className="text-xs text-text-sub">
-                {dayjs(r.createdAt).format('YYYY.MM.DD HH:mm')}
+                제보 {dayjs(r.createdAt).format('YYYY.MM.DD HH:mm')}
+                {r.status !== 'PENDING' && r.updatedAt
+                  ? ` · 처리 ${dayjs(r.updatedAt).format('YYYY.MM.DD HH:mm')}`
+                  : ''}
               </span>
             </div>
           );

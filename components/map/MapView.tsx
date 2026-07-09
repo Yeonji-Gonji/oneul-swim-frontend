@@ -1,7 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { pools, getPoolNowStatus, priceTiers, type NowStatus } from '@/lib/pools';
+import { getPoolNowStatus, type NowStatus } from '@/lib/pools';
+import type { FreeSwimTier, Pool, PriceByTarget } from '@/lib/types';
 import { nowInSeoul } from '@/lib/time';
 import { formatWon, tierLabel } from '@/lib/format';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -16,8 +17,10 @@ const STATUS_COLOR: Record<NowStatus['kind'], string> = {
   'none-today': '#9797A0',
 };
 
-function priceSummary(poolId: string): string {
-  const pool = pools.find((p) => p.id === poolId)!;
+function priceSummary(
+  pool: Pool,
+  priceTiers: Record<FreeSwimTier, PriceByTarget>,
+): string {
   const tiers = new Set(pool.freeSwim.sessions.map((s) => s.tier));
   return (['full', 'half'] as const)
     .filter((t) => tiers.has(t))
@@ -27,9 +30,16 @@ function priceSummary(poolId: string): string {
 
 /**
  * 지도뷰 (Figma Map 19:86 바인딩). 검증 좌표로 핀 표시, 상태색, 핀 선택 시 미니카드.
+ * 데이터(pools/priceTiers)는 서버 컴포넌트가 API 우선 로더로 읽어 주입한다(폴백 시 정적).
  * Kakao Maps JS SDK 사용 — NEXT_PUBLIC_KAKAO_MAP_KEY 필요. 키 없으면 권역 핀 폴백.
  */
-export function MapView() {
+export function MapView({
+  pools,
+  priceTiers,
+}: {
+  pools: Pool[];
+  priceTiers: Record<FreeSwimTier, PriceByTarget>;
+}) {
   const now = useMemo(() => nowInSeoul(), []);
   const [selected, setSelected] = useState(pools[0]);
   const [failed, setFailed] = useState(false);
@@ -75,7 +85,7 @@ export function MapView() {
     s.onload = init;
     s.onerror = () => setFailed(true); // 도메인 미등록(401) 등 로드 실패
     document.head.appendChild(s);
-  }, [now]);
+  }, [now, pools]);
 
   return (
     <div className="relative">
@@ -124,7 +134,9 @@ export function MapView() {
           <span className="text-sm text-text-sub">{selected.region}</span>
         </div>
         <StatusBadge status={getPoolNowStatus(selected, now)} />
-        <span className="text-sm text-text">{priceSummary(selected.id)}</span>
+        <span className="text-sm text-text">
+          {priceSummary(selected, priceTiers)}
+        </span>
       </div>
     </div>
   );

@@ -3,6 +3,8 @@
  * 앱은 동작해야 하므로(정적 MVP 폴백 원칙) 실패를 던지지 않고 결과로 알린다.
  */
 
+import { trackEvent } from './analytics';
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 const DEVICE_ID_KEY = 'oneul-swim:device-id';
@@ -34,6 +36,8 @@ export async function submitReport(input: {
       body: JSON.stringify({ ...input, deviceId: getDeviceId() }),
     });
     if (!res.ok) return { ok: false, reason: 'network' };
+    // 측정: 제보 제출 성공 (GA 미설정 시 no-op)
+    trackEvent('report_submit', { poolId: input.poolId, reason: input.reason });
     return { ok: true };
   } catch {
     return { ok: false, reason: 'network' };

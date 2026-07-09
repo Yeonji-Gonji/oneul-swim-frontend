@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Noto_Sans_KR } from 'next/font/google';
 import { ServiceWorkerRegister } from '@/components/ServiceWorkerRegister';
+import { GoogleAnalytics } from '@/components/analytics/GoogleAnalytics';
 import './globals.css';
 
 // Pretendard는 Google Fonts 미제공 → Noto Sans KR 로드, CSS 스택에서 Pretendard 우선.
@@ -33,6 +34,7 @@ export default function RootLayout({
       <body className="min-h-full">
         {children}
         <ServiceWorkerRegister />
+        <GoogleAnalytics />
       </body>
     </html>
   );

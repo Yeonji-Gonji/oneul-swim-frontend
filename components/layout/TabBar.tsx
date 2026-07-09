@@ -4,7 +4,7 @@ import { cn } from '@/lib/cn';
 
 /**
  * 하단 탭바 — 홈 / 강습알림 / 더보기.
- * 홈만 활성(현재 라우트). 강습알림·더보기 화면은 미구현이라 비활성 표시.
+ * 세 탭 모두 실제 라우트로 연결된다(/, /lessons, /more). active prop으로 현재 탭 강조.
  */
 const TABS = [
   { key: 'home', label: '홈', Icon: IconHome, href: '/' },

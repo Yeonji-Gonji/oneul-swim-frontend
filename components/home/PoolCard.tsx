@@ -1,13 +1,16 @@
 import Link from 'next/link';
-import type { Pool } from '@/lib/types';
+import type { FreeSwimTier, Pool, PriceByTarget } from '@/lib/types';
 import type { Dayjs } from '@/lib/time';
-import { getPoolNowStatus, priceTiers } from '@/lib/pools';
+import { getPoolNowStatus } from '@/lib/pools';
 import { formatWon, tierLabel } from '@/lib/format';
 import { StatusBadge } from '@/components/ui/StatusBadge';
 import { FreshnessTag } from '@/components/ui/FreshnessTag';
 
 /** 시설이 제공하는 자유수영 요금(전일/반일)을 세션 tier 기준으로 요약 */
-function priceSummary(pool: Pool): string {
+function priceSummary(
+  pool: Pool,
+  priceTiers: Record<FreeSwimTier, PriceByTarget>,
+): string {
   const tiers = new Set(pool.freeSwim.sessions.map((s) => s.tier));
   return (['full', 'half'] as const)
     .filter((t) => tiers.has(t))
@@ -19,10 +22,12 @@ function priceSummary(pool: Pool): string {
 export function PoolCard({
   pool,
   now,
+  priceTiers,
   distanceKm,
 }: {
   pool: Pool;
   now: Dayjs;
+  priceTiers: Record<FreeSwimTier, PriceByTarget>;
   distanceKm?: number;
 }) {
   const status = getPoolNowStatus(pool, now);
@@ -38,7 +43,7 @@ export function PoolCard({
         </span>
       </div>
       <StatusBadge status={status} />
-      <span className="text-sm text-text">{priceSummary(pool)}</span>
+      <span className="text-sm text-text">{priceSummary(pool, priceTiers)}</span>
       <FreshnessTag updatedAt={pool.updatedAt} />
     </Link>
   );
