@@ -23,11 +23,13 @@ export const pools: Pool[] = data.pools;
 export const getPoolById = (id: string): Pool | undefined =>
   pools.find((p) => p.id === id);
 
-/** 리스팅 전용(자유수영 정보 없음) 시설인가 */
+/**
+ * 리스팅 전용(자유수영 정보 없음) 시설인가 — 데이터 기반 판정.
+ * freeSwim.sessions 가 채워지면(어드민/제보) 자동으로 "정상 운영"으로 승격된다.
+ * (dataStatus 플래그는 임포트 힌트일 뿐, 화면은 실제 데이터로만 판정)
+ */
 export const isListing = (pool: Pool): boolean =>
-  pool.dataStatus === 'listing' ||
-  !pool.freeSwim ||
-  pool.freeSwim.sessions.length === 0;
+  !pool.freeSwim || pool.freeSwim.sessions.length === 0;
 
 /** 세션의 tier를 시설별 요금표로 변환. 요금 데이터 없으면 undefined */
 export const resolveSessionPrice = (
@@ -76,8 +78,10 @@ const SOON_THRESHOLD_MIN = 90;
 
 /** 현재 시각(Asia/Seoul dayjs) 기준 시설의 자유수영 상태. */
 export const getPoolNowStatus = (pool: Pool, now: Dayjs): NowStatus => {
-  // 리스팅 전용 시설은 시간표가 없음 → 정보 준비중
-  if (!pool.freeSwim) return { kind: 'listing' };
+  // 자유수영 세션이 없으면(리스팅 전용) 정보 준비중
+  if (!pool.freeSwim || pool.freeSwim.sessions.length === 0) {
+    return { kind: 'listing' };
+  }
   const todays = pool.freeSwim.sessions
     .filter((s) => isSessionToday(s, now))
     .sort((a, b) => toMinutes(a.start) - toMinutes(b.start));

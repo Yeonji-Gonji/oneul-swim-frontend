@@ -31,7 +31,7 @@ export default async function PoolDetailPage({
 
   const now = nowInSeoul();
   const status = getPoolNowStatus(pool, now);
-  const listing = !pool.freeSwim || pool.dataStatus === 'listing';
+  const listing = !pool.freeSwim || pool.freeSwim.sessions.length === 0;
   const kakaoTo =
     pool.lat != null && pool.lng != null
       ? `https://map.kakao.com/link/to/${encodeURIComponent(pool.name)},${pool.lat},${pool.lng}`
