@@ -34,6 +34,16 @@ const DAY_OPTIONS: { v: DayFilter; label: string }[] = [
   { v: 0, label: '일' },
 ];
 
+const STATUS_OPTIONS: {
+  v: 'all' | 'open' | 'notopen';
+  label: string;
+  dot: string | null;
+}[] = [
+  { v: 'all', label: '전체', dot: null },
+  { v: 'open', label: '지금 운영중', dot: STATUS_HEX.open },
+  { v: 'notopen', label: '오픈 준비중', dot: STATUS_HEX.soon },
+];
+
 const LIST_CAP = 80; // 미가상화 리스트 렌더 상한(전국 600+ 대비)
 
 /** 좌표 폴백 센터(대한민국 중앙 근방) */
@@ -148,6 +158,7 @@ function DayStatus({
 export function MapExplorer({ pools }: { pools: Pool[] }) {
   const now = useMemo(() => nowInSeoul(), []);
   const [day, setDay] = useState<DayFilter>('today');
+  const [status, setStatus] = useState<'all' | 'open' | 'notopen'>('all');
   const [sido, setSido] = useState('all');
   const [sigungu, setSigungu] = useState('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
@@ -194,9 +205,19 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
     [pools, sido, sigungu],
   );
 
+  // 상태 필터(전체/지금 운영중/오픈 준비중) — 마커·리스트 공통 적용
+  const filteredPools = useMemo(() => {
+    if (status === 'all') return scoped;
+    // open = 지금 운영중 / notopen = 운영중이 아닌 모든 곳(준비중·종료·없음·정보없음)
+    return scoped.filter((p) => {
+      const isOpen = markerKind(p, day, now) === 'open';
+      return status === 'open' ? isOpen : !isOpen;
+    });
+  }, [scoped, status, day, now]);
+
   // 거리 + 정렬된 리스트
   const listed = useMemo(() => {
-    const withMeta = scoped.map((p) => ({
+    const withMeta = filteredPools.map((p) => ({
       pool: p,
       dist: userLoc ? distanceKm(userLoc.lat, userLoc.lng, p.lat, p.lng) : null,
       kind: markerKind(p, day, now),
@@ -212,7 +233,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
       return a.pool.name.localeCompare(b.pool.name, 'ko');
     });
     return withMeta;
-  }, [scoped, userLoc, day, now]);
+  }, [filteredPools, userLoc, day, now]);
 
   const visibleList = listed.slice(0, LIST_CAP);
   const selectedPool = selectedId
@@ -294,7 +315,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
 
     const bounds = new kakao.maps.LatLngBounds();
     const markers: kakao.maps.Marker[] = [];
-    scoped.forEach((p) => {
+    filteredPools.forEach((p) => {
       if (p.lat == null || p.lng == null) return;
       const pos = new kakao.maps.LatLng(p.lat, p.lng);
       bounds.extend(pos);
@@ -334,7 +355,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
       if (!(userLoc && sido === 'all')) map.setBounds(bounds);
       scopeKeyRef.current = scopeKey;
     }
-  }, [mapReady, scoped, day, now, sido, sigungu, userLoc]);
+  }, [mapReady, filteredPools, day, now, sido, sigungu, userLoc]);
 
   // 내 위치 오버레이 + 센터링
   useEffect(() => {
@@ -398,6 +419,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
 
       {/* 플로팅 글라스 필터 (상단) — Apple 지도풍 */}
       <div
+        id="map-filter-stack"
         className="absolute inset-x-0 top-0 z-20 flex flex-col gap-2 px-3"
         style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.75rem)' }}
       >
@@ -458,12 +480,41 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
             );
           })}
         </div>
+
+        {/* 상태 필터 — 전체 / 지금 운영중 / 오픈 준비중 */}
+        <div className="glass-panel flex gap-1 self-start rounded-full p-1 shadow-card">
+          {STATUS_OPTIONS.map((s) => {
+            const active = s.v === status;
+            return (
+              <button
+                key={s.v}
+                type="button"
+                onClick={() => setStatus(s.v)}
+                className={cn(
+                  'flex shrink-0 items-center gap-1.5 rounded-full px-3.5 py-1.5 text-sm transition duration-150 active:scale-[0.96]',
+                  active
+                    ? 'bg-primary-fill font-bold text-white'
+                    : 'font-medium text-text-mute',
+                )}
+              >
+                {s.dot && (
+                  <span
+                    className="size-2 rounded-full"
+                    style={{ backgroundColor: s.dot }}
+                    aria-hidden
+                  />
+                )}
+                {s.label}
+              </button>
+            );
+          })}
+        </div>
       </div>
 
       {/* 플로팅 컨트롤 (우측) — 내 위치 */}
       <div
         className="absolute right-3 z-20 flex flex-col gap-2"
-        style={{ top: 'calc(env(safe-area-inset-top) + 6.5rem)' }}
+        style={{ top: 'calc(env(safe-area-inset-top) + 9.75rem)' }}
       >
         <button
           type="button"

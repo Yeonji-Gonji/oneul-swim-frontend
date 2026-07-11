@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
 import { pools } from '@/lib/pools';
 import { dayjs } from '@/lib/time';
@@ -16,6 +16,11 @@ import {
   isPushSupported,
 } from '@/lib/push';
 
+// hydration 플래그용 — SSR/첫 CSR 렌더에선 false, 하이드레이션 후 true (effect-setState 없이)
+const emptySubscribe = () => () => {};
+const getTrue = () => true;
+const getFalse = () => false;
+
 const PUSH_ERROR_MESSAGE: Record<string, string> = {
   unsupported: '이 브라우저는 푸시 알림을 지원하지 않아요.',
   denied: '알림 권한이 꺼져 있어요. 브라우저 설정에서 허용해 주세요.',
@@ -29,6 +34,8 @@ export default function MorePage() {
   const [pushBusy, setPushBusy] = useState(false);
   const [pushError, setPushError] = useState<string | null>(null);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
+  // 클라이언트 전용 판정(isPushSupported)은 하이드레이션 후에만 렌더 → SSR/CSR 불일치 방지
+  const hydrated = useSyncExternalStore(emptySubscribe, getTrue, getFalse);
 
   // 구독 여부의 진실은 브라우저 pushManager에 있다
   useEffect(() => {
@@ -76,7 +83,7 @@ export default function MorePage() {
               {pushError}
             </p>
           )}
-          {!isPushSupported() && !pushError && (
+          {hydrated && !isPushSupported() && !pushError && (
             <p className="mt-3 text-xs leading-relaxed text-text-sub">
               iOS는 홈 화면에 추가한 앱에서만 알림을 받을 수 있어요.
             </p>

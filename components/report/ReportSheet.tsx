@@ -53,7 +53,7 @@ export function ReportSheet({
         onClick={() => setOpen(true)}
         className={buttonClass('outline')}
       >
-        <IconFlag className="size-[18px]" />
+        <IconFlag className="size-4.5" />
         정보 틀렸어요 제보
       </button>
 
@@ -109,7 +109,7 @@ export function ReportSheet({
                 />
 
                 <label className="mt-3 flex cursor-pointer items-center justify-center gap-1.5 rounded-input border border-line bg-bg py-4 text-sm text-text-sub">
-                  <IconCamera className="size-[18px]" />
+                  <IconCamera className="size-4.5" />
                   사진 첨부 (선택)
                   <input type="file" accept="image/*" className="hidden" />
                 </label>

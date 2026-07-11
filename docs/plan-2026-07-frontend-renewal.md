@@ -63,7 +63,9 @@
 리스트-퍼스트 홈을 **내 위치 기반 지도-퍼스트**로 전면 재배치. 레퍼런스 = **최신 Apple 지도 UI**(플로팅 반투명 패널·큰 라운드·헤비 blur·헤어라인 보더·드롭섀도, 우상단 스택형 맵 컨트롤). Phase B의 `.glass` 토큰을 `.glass-panel`(헤비 blur+헤어라인 보더)로 확장.
 
 **구현 요약**: `components/map/MapExplorer.tsx`(풀스크린 지도+geolocation+상태색 마커+MarkerClusterer+현위치 버튼+선택 미니카드) + `components/map/MapSheet.tsx`(3단 detent 드래그 바텀시트) + `lib/geo.ts`(haversine 거리). 홈(`app/page.tsx`)=MapExplorer로 교체, `/map`→홈 리다이렉트, sitemap/llms 정리, 구 `HomeClient`·`FilterChips`·`PullToRefresh`·`ViewToggle`·`MapView` 삭제, PoolCard는 `/pools` SEO 페이지용으로 존치.
-**검증**: typecheck/lint/test(29)/build(232p) 그린. ⚠️ **지도 타일·마커·클러스터·geolocation·드래그 시트의 실제 렌더링은 미검증** — 로컬에 `NEXT_PUBLIC_KAKAO_MAP_KEY` 없어 지도가 폴백으로만 뜸. **배포(키 등록된 Vercel)·실기기에서 시각 검증 필요**.
+**필터 3종**: 지역(시도/시군구) · 날짜(오늘+요일) · **상태(전체 / 지금 운영중 / 오픈 준비중)**. "오픈 준비중" = 지금 운영중이 아닌 모든 시설(soon·종료·없음·정보준비중 포함). 마커·리스트 공통 적용.
+**검증(2026-07-11, localhost:3000, prod build)**: typecheck/lint/test(29)/build 그린 + Playwright 실렌더 확인 — 지도 타일·상태색 마커·**클러스터(서울 93곳→50/42 버블)**·geolocation 내 위치·거리 정렬·3필터·드래그 시트 정상. 상태 필터 카운트 검증(전체 604 / 운영중 5 / 준비중 599). ※Kakao JS 키는 **도메인 등록 필수** — `localhost:3000`은 등록돼 동작, 미등록 도메인(예: :3100)은 401 폴백. Vercel 배포 도메인 등록 확인 필요.
+**바텀시트 겹침 수정**: ① 하단 — 시트 바닥을 뷰포트 바닥에 고정 + 스크롤 콘텐츠에 탭바 높이(실측)만큼 하단 패딩 → 목록이 탭바 뒤로 가려지던 문제 해소. ② 상단 — full detent 시작 높이를 **상단 필터 스택 bottom 실측값 + 12px**로 동적 계산(`#map-filter-stack` 측정, ResizeObserver). 노치 `safe-area-inset-top`으로 필터가 밀리는 실기기에서 시트 헤더·첫 카드가 필터에 겹쳐 가려지던 문제 해소(헤드리스=safe-area 0이라 미재현 → 실기기 재현·수정). peek는 탭바 위로 172px(헤더+카드1개).
 
 - **홈 = 지도**: `/`를 지도로 전환(기존 `/map` 로직 흡수). 진입 시 **Geolocation 권한 → 내 위치 센터링**, 주변 시설을 상태색 마커(green=지금 가능 / amber=곧 / gray=종료·준비중)로. 권한 거부 시 지역(시도) 폴백 센터. 600+곳은 **마커 클러스터링** 필수.
 - **플로팅 글라스모피즘 필터**: 지역(시도/시군구) + 날짜(요일/오늘) 필터를 지도 위 **플로팅 글라스 바/칩**(Apple 지도풍 좌상단 반투명 카드 or 상단 필로우)으로. 날짜 선택 시 "그날 기준" 상태로 마커 재계산.
