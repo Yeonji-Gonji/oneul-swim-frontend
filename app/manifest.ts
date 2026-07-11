@@ -4,9 +4,9 @@ import type { MetadataRoute } from 'next';
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: '/',
-    name: '오늘수영 — 하남 자유수영',
+    name: '오늘수영 — 지금 갈 수 있는 자유수영장',
     short_name: '오늘수영',
-    description: '지금 하남에서 자유수영 갈 수 있는 곳을 한눈에.',
+    description: '전국 수영장의 자유수영 시간과 요금을 한눈에.',
     start_url: '/',
     scope: '/',
     display: 'standalone',

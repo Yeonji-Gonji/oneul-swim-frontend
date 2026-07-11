@@ -32,7 +32,10 @@ const PUSH_ERROR_MESSAGE: Record<string, string> = {
 export default function LessonsPage() {
   // 시설별 대표 강습 1개씩 (실데이터)
   const featured = pools
-    .map((p) => (p.lessons?.[0] ? { pool: p, lesson: p.lessons[0] } : null))
+    .map((p) => {
+      const firstLesson = p.lessons?.[0];
+      return firstLesson ? { pool: p, lesson: firstLesson } : null;
+    })
     .filter((x): x is NonNullable<typeof x> => x !== null);
 
   const [subscribed, setSubscribed] = useState(false);

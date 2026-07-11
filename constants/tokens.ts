@@ -75,5 +75,7 @@ export const statusToToken = (
     case 'none-today':
     case 'listing':
       return 'closed';
+    default:
+      return 'closed';
   }
 };
