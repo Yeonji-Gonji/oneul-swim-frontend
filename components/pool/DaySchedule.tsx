@@ -69,7 +69,7 @@ export function DaySchedule({ pool }: { pool: Pool }) {
               </span>
               <span
                 className={cn(
-                  'h-0.5 w-[22px]',
+                  'h-0.5 w-5.5',
                   active ? 'bg-primary' : 'bg-transparent',
                 )}
               />
