@@ -23,6 +23,9 @@
 
 ## 최근 완료
 
+- 2026-07-11 P4: `SOON_THRESHOLD_MIN` 임계값 실제 로직에 적용 (데드코드 정리)
+- 2026-07-11 P4: 디자인 토큰 이중 관리 해소 (`globals.css` @theme 단일 소스로 통합)
+
 - 2026-07-09 P1 Vitest 도입: lib/pools 상태·주차 규칙 단위테스트 22개 + CI test 스텝
 - 2026-07-09 P3 프론트: `GET /pools` API 우선 로딩(lib/pools-data.ts) + 정적 폴백, 미니 어드민(`/admin`), 제보 루프 완성(APPLIED 강조·처리시각)
 - 2026-07-09 P4: GA4 측정(env 게이트, report_submit·push_subscribe), 강습 "접수 소식 알림" 서버구독 재정의, TWA 출시 절차 문서화
@@ -31,11 +34,9 @@
 
 ## 알려진 이슈 / 남은 일
 
-- `lib/pools.ts`의 `SOON_THRESHOLD_MIN` 상수가 미사용 데드코드. soon 판정이 임계값 없이 동작(90분 임박 강조 미반영), 의도 확인 후 정리 필요
-- 디자인 토큰이 constants/tokens.ts와 globals.css @theme 이중 관리
 - 좌표·주소 null 이슈는 해소됨(4곳 전부 lat/lng/address 존재)
 
 ## 링크
 
-- 백엔드: `../oneul-swim-backend` (API `https://161-33-15-188.sslip.io`)
+- 백엔드: `../oneul-swim-backend` (API `https://oneul-swim.duckdns.org`)
 - GitHub: Yeonji-Gonji/oneul-swim-frontend

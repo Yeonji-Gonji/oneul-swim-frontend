@@ -22,7 +22,7 @@ export function Header(props: HeaderProps) {
         <div className="flex items-center gap-1.5">
           <IconPin className="size-4 text-text" />
           <span className="text-lg font-bold text-text">
-            {props.label ?? '하남시'}
+            {props.label ?? '전국'}
           </span>
         </div>
       )}

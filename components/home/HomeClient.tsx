@@ -1,11 +1,13 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
 import { getPoolNowStatus, sortPoolsByStatus, type NowStatus } from '@/lib/pools';
 import type { Pool } from '@/lib/types';
 import { nowInSeoul, type Dayjs } from '@/lib/time';
 import { Button } from '@/components/ui/Button';
 import { IconMoon } from '@/components/ui/icons';
+import { Header } from '@/components/layout/Header';
 import { FilterChips, type PoolFilter } from './FilterChips';
 import { PoolCard } from './PoolCard';
 
@@ -15,9 +17,16 @@ import { PoolCard } from './PoolCard';
  * 요금은 각 pool.fees 에 실려 오므로 별도 주입이 필요 없다.
  * "지금 상태"는 클라이언트에서 사용자 시계(Asia/Seoul) 기준 계산, 1분마다 갱신.
  */
-export function HomeClient({ pools }: { pools: Pool[] }) {
+export function HomeClient({
+  pools,
+  headerRight,
+}: {
+  pools: Pool[];
+  headerRight?: ReactNode;
+}) {
   const [filter, setFilter] = useState<PoolFilter>('now');
   const [sido, setSido] = useState<string>('all');
+  const [sigungu, setSigungu] = useState<string>('all');
   const [now, setNow] = useState<Dayjs>(() => nowInSeoul());
 
   useEffect(() => {
@@ -32,10 +41,28 @@ export function HomeClient({ pools }: { pools: Pool[] }) {
     return [...set].sort();
   }, [pools]);
 
-  const scoped = useMemo(
-    () => (sido === 'all' ? pools : pools.filter((p) => p.sido === sido)),
-    [pools, sido],
-  );
+  // 선택된 시도의 시군구 목록
+  const sigunguOptions = useMemo(() => {
+    if (sido === 'all') return [];
+    const set = new Set<string>();
+    for (const p of pools) {
+      if (p.sido === sido && p.sigungu) set.add(p.sigungu);
+    }
+    return [...set].sort();
+  }, [pools, sido]);
+
+  const scoped = useMemo(() => {
+    return pools.filter((p) => {
+      if (sido !== 'all' && p.sido !== sido) return false;
+      if (sigungu !== 'all' && p.sigungu !== sigungu) return false;
+      return true;
+    });
+  }, [pools, sido, sigungu]);
+
+  const handleSidoChange = (newSido: string) => {
+    setSido(newSido);
+    setSigungu('all'); // 시도가 바뀌면 시군구 선택 초기화
+  };
 
   const { visible, openCount, soonCount } = useMemo(() => {
     const withStatus = scoped.map((pool) => ({
@@ -65,22 +92,46 @@ export function HomeClient({ pools }: { pools: Pool[] }) {
   // '지금 가능' 필터인데 지금 열린 곳이 없을 때 — 리치 empty (Figma Home/지금0곳)
   const emptyNow = filter === 'now' && openCount === 0;
 
+  // 헤더에 표시할 지역 이름 동적 계산
+  const headerLabel =
+    sido === 'all' ? '전국' : sigungu === 'all' ? sido : sigungu;
+
   return (
     <div className="flex flex-col gap-4">
+      <Header variant="location" label={headerLabel} right={headerRight} />
+      
       {sidoOptions.length > 1 && (
-        <select
-          value={sido}
-          onChange={(e) => setSido(e.target.value)}
-          className="w-fit rounded-full border border-line bg-surface px-3 py-1.5 text-sm text-text"
-          aria-label="지역(시도) 선택"
-        >
-          <option value="all">전국</option>
-          {sidoOptions.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
+        <div className="flex flex-wrap gap-2">
+          <select
+            value={sido}
+            onChange={(e) => handleSidoChange(e.target.value)}
+            className="w-fit rounded-full border border-line bg-surface px-3 py-1.5 text-sm text-text"
+            aria-label="지역(시도) 선택"
+          >
+            <option value="all">전국</option>
+            {sidoOptions.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+
+          {sido !== 'all' && sigunguOptions.length > 1 && (
+            <select
+              value={sigungu}
+              onChange={(e) => setSigungu(e.target.value)}
+              className="w-fit rounded-full border border-line bg-surface px-3 py-1.5 text-sm text-text"
+              aria-label="지역(시군구) 선택"
+            >
+              <option value="all">전체</option>
+              {sigunguOptions.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          )}
+        </div>
       )}
 
       <FilterChips value={filter} onChange={setFilter} />

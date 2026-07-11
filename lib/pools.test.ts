@@ -88,17 +88,27 @@ describe('getPoolNowStatus', () => {
     }
   });
 
-  it('여러 세션 중 다음 세션까지 minsUntil 계산', () => {
+  it('여러 세션 중 다음 세션까지 minsUntil 계산 (90분 초과 시 none-today)', () => {
     const multi = pool([
       session({ start: '06:00', end: '07:50' }),
       session({ start: '12:00', end: '12:50' }),
     ]);
-    // 08:30 → 06:00 세션은 끝났고 다음은 12:00 (210분 뒤)
+    // 08:30 → 06:00 세션은 끝났고 다음은 12:00 (210분 뒤, 90분 초과)
+    const status = getPoolNowStatus(multi, at('2026-07-06 08:30'));
+    expect(status.kind).toBe('none-today');
+  });
+
+  it('여러 세션 중 다음 세션까지 minsUntil 계산 (90분 이내 시 soon)', () => {
+    const multi = pool([
+      session({ start: '06:00', end: '07:50' }),
+      session({ start: '09:00', end: '09:50' }),
+    ]);
+    // 08:30 → 06:00 세션은 끝났고 다음은 09:00 (30분 뒤)
     const status = getPoolNowStatus(multi, at('2026-07-06 08:30'));
     expect(status.kind).toBe('soon');
     if (status.kind === 'soon') {
-      expect(status.startsAt).toBe('12:00');
-      expect(status.minsUntil).toBe(210);
+      expect(status.startsAt).toBe('09:00');
+      expect(status.minsUntil).toBe(30);
     }
   });
 
@@ -204,7 +214,7 @@ describe('sortPoolsByStatus', () => {
 
   const openPool = pool([session({ start: '06:00', end: '07:50' })], 'open');
   const soonNear = pool([session({ start: '07:00', end: '07:50' })], 'soonNear'); // 30분 뒤
-  const soonFar = pool([session({ start: '20:00', end: '20:50' })], 'soonFar'); // 저녁
+  const soonFar = pool([session({ start: '07:45', end: '08:50' })], 'soonFar'); // 75분 뒤 (soon 임계치 이내)
   const closedPool = pool([session({ start: '05:00', end: '06:00' })], 'closed');
   const nonePool = pool([session({ dayCodes: [6], start: '09:00', end: '10:50' })], 'none');
 

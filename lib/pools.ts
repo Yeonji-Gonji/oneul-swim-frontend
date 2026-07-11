@@ -74,6 +74,7 @@ export type NowStatus =
   | { kind: 'none-today' } // ⚪ 오늘 자유수영 운영 없음
   | { kind: 'listing' }; // ⚪ 자유수영 정보 준비중(기본정보만)
 
+/** 몇 분 이내에 시작하는 세션을 "곧 시작" 으로 표시할 임계값 */
 const SOON_THRESHOLD_MIN = 90;
 
 /** 현재 시각(Asia/Seoul dayjs) 기준 시설의 자유수영 상태. */
@@ -95,15 +96,20 @@ export const getPoolNowStatus = (pool: Pool, now: Dayjs): NowStatus => {
   );
   if (ongoing) return { kind: 'open', session: ongoing, endsAt: ongoing.end };
 
+  // 아직 시작 안 한 세션 중 가장 빠른 것 — SOON_THRESHOLD_MIN 이내면 "곧 시작"
   const upcoming = todays.find((s) => toMinutes(s.start) > cur);
   if (upcoming) {
     const minsUntil = toMinutes(upcoming.start) - cur;
-    return {
-      kind: 'soon',
-      session: upcoming,
-      startsAt: upcoming.start,
-      minsUntil,
-    };
+    if (minsUntil <= SOON_THRESHOLD_MIN) {
+      return {
+        kind: 'soon',
+        session: upcoming,
+        startsAt: upcoming.start,
+        minsUntil,
+      };
+    }
+    // 90분 초과 — 오늘 세션은 있지만 아직 멀었음(none-today 아님: none-today는 운영일 자체 없음)
+    return { kind: 'none-today' };
   }
 
   return { kind: 'closed-today' };
@@ -146,4 +152,4 @@ export const freshnessLabel = (updatedAt: string, now: Dayjs): string => {
   return `${diffDays}일 전 업데이트`;
 };
 
-export { SOON_THRESHOLD_MIN };
+
