@@ -141,7 +141,7 @@ export function HomeClient({
           <p className="text-body font-bold text-text">
             지금은 자유수영 가능한 곳이 없어요
           </p>
-          <div className="flex flex-col items-center gap-4 rounded-input bg-surface px-4 py-8 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
+          <div className="flex flex-col items-center gap-4 rounded-input bg-surface px-4 py-8 shadow-card">
             <IconMoon className="size-8 text-text-sub" />
             <p className="text-center text-sm text-text-sub">
               {soonCount > 0
@@ -170,7 +170,7 @@ export function HomeClient({
               ))}
             </div>
           ) : (
-            <p className="rounded-input bg-surface px-4 py-8 text-center text-sm leading-relaxed text-text-sub shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
+            <p className="rounded-input bg-surface px-4 py-8 text-center text-sm leading-relaxed text-text-sub shadow-card">
               조건에 맞는 수영장이 없어요.
             </p>
           )}

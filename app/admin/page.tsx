@@ -144,7 +144,7 @@ export default function AdminPage() {
           본인 카카오 계정으로 로그인하면 승인 권한이 부여돼요.
         </p>
 
-        {loginError && <p className="text-sm text-red-500">{loginError}</p>}
+        {loginError && <p className="text-sm text-error">{loginError}</p>}
 
         <button
           type="button"
@@ -202,7 +202,7 @@ export default function AdminPage() {
             onClick={() => setTab(t.key)}
             className={`rounded-full border px-3 py-1.5 text-sm ${
               tab === t.key
-                ? 'border-primary bg-primary text-white'
+                ? 'border-primary bg-primary-fill text-white'
                 : 'border-line bg-surface text-text'
             }`}
           >

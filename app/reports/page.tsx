@@ -86,7 +86,7 @@ export default function MyReportsPage() {
           return (
             <div
               key={r.id}
-              className={`flex flex-col gap-2 rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)] ${
+              className={`flex flex-col gap-2 rounded-input bg-surface p-4 shadow-card ${
                 applied ? 'ring-2 ring-now-open' : ''
               }`}
             >

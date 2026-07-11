@@ -16,9 +16,9 @@ export function Chip({
       type="button"
       onClick={onClick}
       className={cn(
-        'shrink-0 whitespace-nowrap rounded-full px-4 py-2 text-sm transition',
+        'shrink-0 select-none whitespace-nowrap rounded-full px-4 py-2 text-sm transition duration-150 active:scale-[0.96]',
         selected
-          ? 'bg-primary font-bold text-white'
+          ? 'bg-primary-fill font-bold text-white'
           : 'border border-line bg-surface font-normal text-text-mute',
       )}
     >

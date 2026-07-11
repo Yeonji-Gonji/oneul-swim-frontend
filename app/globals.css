@@ -3,38 +3,168 @@
 /**
  * 디자인 토큰 — constants/tokens.ts(= Figma 🎨 Foundations)의 Tailwind v4 미러.
  * Foundations 변경 시 tokens.ts와 이 블록을 함께 갱신한다.
+ *
+ * 구조(2026-07-11 iOS 리뉴얼): 색상·elevation은 :root의 시맨틱 변수(라이트)로 두고,
+ * prefers-color-scheme: dark 에서 값만 뒤집는다. @theme 는 그 변수를 var()로 참조하므로
+ * Tailwind 유틸(bg-surface, text-text, shadow-card …)은 그대로 두고 라이트/다크가 자동 전환된다.
+ * [data-theme] 훅을 두어 향후 수동 토글도 무비용으로 붙일 수 있게 했다
+ * (data-theme="light"면 시스템 다크여도 라이트 고정, "dark"면 강제 다크).
  */
-@theme {
-  /* Primary — 워터블루 */
-  --color-primary: #0e7c86;
-  --color-primary-strong: #0a5f67;
-  --color-primary-blue: #2e9bd6;
-  --color-primary-10: #e5f4f5;
-  --color-primary-5: #f2fafa;
+
+:root {
+  color-scheme: light;
+
+  /* Primary — 워터블루 (accent: 텍스트/보더/활성) */
+  --primary: #0e7c86;
+  --primary-strong: #0a5f67;
+  --primary-blue: #2e9bd6;
+  /* solid 버튼·활성 pill 등 흰 텍스트를 얹는 채움색(양 테마 white-safe) */
+  --primary-fill: #0e7c86;
+  /* 은은한 틴트 배경 */
+  --primary-10: #e5f4f5;
+  --primary-5: #f2fafa;
 
   /* Text / Surface / Line */
-  --color-text: #2a2d34;
-  --color-text-sub: #9797a0;
-  --color-line: #eaeaec;
-  --color-bg: #f4f5f6;
-  --color-surface: #ffffff;
+  --ink: #2a2d34;
+  --ink-sub: #9797a0;
+  --ink-mute: #5b5b63;
+  --line: #eaeaec;
+  --bg: #f4f5f6;
+  --surface: #ffffff;
+  /* 보조 채움(medium 버튼·비활성 트랙 등) */
+  --fill-secondary: #f0f1f2;
+  --fill-disabled: #d6d8db;
 
   /* 상태 (앱 핵심 규약) — getPoolNowStatus와 1:1 */
-  --color-now-open: #2db16b;
-  --color-upcoming: #f0a231;
-  --color-closed: #9797a0;
-  --color-error: #c80000;
+  --now-open: #2db16b;
+  --upcoming: #f0a231;
+  --closed: #9797a0;
+  --error: #d92626;
 
-  /* 상태 뱃지 — 틴트 배경(10%) + 텍스트 잉크(AA 대비) */
-  --color-now-open-soft: #2db16b1a;
-  --color-now-open-ink: #1e8f54;
-  --color-upcoming-soft: #f0a2311a;
-  --color-upcoming-ink: #c77e1f;
-  --color-closed-soft: #9797a01a;
-  --color-closed-ink: #6b6b73;
+  /* 상태 뱃지 — 틴트 배경(알파) + 텍스트 잉크(AA 대비) */
+  --now-open-soft: #2db16b1a;
+  --now-open-ink: #1e8f54;
+  --upcoming-soft: #f0a2311a;
+  --upcoming-ink: #c77e1f;
+  --closed-soft: #9797a01a;
+  --closed-ink: #6b6b73;
 
-  /* 칩 비활성 텍스트 */
-  --color-text-mute: #5b5b63;
+  /* Elevation — iOS풍 소프트/레이어드 */
+  --elev-card: 0 1px 2px rgba(16, 24, 40, 0.04),
+    0 6px 16px rgba(16, 24, 40, 0.06);
+  --elev-nav: 0 -0.5px 0 rgba(16, 24, 40, 0.08),
+    0 -8px 24px rgba(16, 24, 40, 0.06);
+  --elev-sheet: 0 -1px 0 rgba(16, 24, 40, 0.06),
+    0 -12px 40px rgba(16, 24, 40, 0.16);
+}
+
+/* 다크 팔레트(시스템 다크; data-theme="light"면 유지 안 함) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --primary: #38c6d3;
+    --primary-strong: #63d6e0;
+    --primary-blue: #4bb4e6;
+    --primary-fill: #0e8f9b;
+    --primary-10: rgba(56, 198, 211, 0.14);
+    --primary-5: rgba(56, 198, 211, 0.07);
+
+    --ink: #f1f2f3;
+    --ink-sub: #9a9aa2;
+    --ink-mute: #b6b6be;
+    --line: #2c2f31;
+    --bg: #0f1214;
+    --surface: #1b1e20;
+    --fill-secondary: #26292b;
+    --fill-disabled: #3a3d40;
+
+    --now-open: #34d17f;
+    --upcoming: #f4b45e;
+    --closed: #8b8b93;
+    --error: #ff6b6b;
+
+    --now-open-soft: rgba(52, 209, 127, 0.16);
+    --now-open-ink: #4fdc95;
+    --upcoming-soft: rgba(244, 180, 94, 0.16);
+    --upcoming-ink: #f4b45e;
+    --closed-soft: rgba(139, 139, 147, 0.18);
+    --closed-ink: #adadb6;
+
+    --elev-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 16px rgba(0, 0, 0, 0.28);
+    --elev-nav: 0 -0.5px 0 rgba(0, 0, 0, 0.5), 0 -8px 24px rgba(0, 0, 0, 0.32);
+    --elev-sheet: 0 -1px 0 rgba(255, 255, 255, 0.04),
+      0 -12px 40px rgba(0, 0, 0, 0.5);
+  }
+}
+
+/* 강제 다크(수동 토글 훅) — 시스템과 무관 */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --primary: #38c6d3;
+  --primary-strong: #63d6e0;
+  --primary-blue: #4bb4e6;
+  --primary-fill: #0e8f9b;
+  --primary-10: rgba(56, 198, 211, 0.14);
+  --primary-5: rgba(56, 198, 211, 0.07);
+
+  --ink: #f1f2f3;
+  --ink-sub: #9a9aa2;
+  --ink-mute: #b6b6be;
+  --line: #2c2f31;
+  --bg: #0f1214;
+  --surface: #1b1e20;
+  --fill-secondary: #26292b;
+  --fill-disabled: #3a3d40;
+
+  --now-open: #34d17f;
+  --upcoming: #f4b45e;
+  --closed: #8b8b93;
+  --error: #ff6b6b;
+
+  --now-open-soft: rgba(52, 209, 127, 0.16);
+  --now-open-ink: #4fdc95;
+  --upcoming-soft: rgba(244, 180, 94, 0.16);
+  --upcoming-ink: #f4b45e;
+  --closed-soft: rgba(139, 139, 147, 0.18);
+  --closed-ink: #adadb6;
+
+  --elev-card: 0 1px 2px rgba(0, 0, 0, 0.4), 0 6px 16px rgba(0, 0, 0, 0.28);
+  --elev-nav: 0 -0.5px 0 rgba(0, 0, 0, 0.5), 0 -8px 24px rgba(0, 0, 0, 0.32);
+  --elev-sheet: 0 -1px 0 rgba(255, 255, 255, 0.04),
+    0 -12px 40px rgba(0, 0, 0, 0.5);
+}
+
+@theme {
+  /* 색상 — 시맨틱 변수를 참조(라이트/다크 자동 전환) */
+  --color-primary: var(--primary);
+  --color-primary-strong: var(--primary-strong);
+  --color-primary-blue: var(--primary-blue);
+  --color-primary-fill: var(--primary-fill);
+  --color-primary-10: var(--primary-10);
+  --color-primary-5: var(--primary-5);
+
+  --color-text: var(--ink);
+  --color-text-sub: var(--ink-sub);
+  --color-text-mute: var(--ink-mute);
+  --color-line: var(--line);
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-fill-secondary: var(--fill-secondary);
+  --color-fill-disabled: var(--fill-disabled);
+
+  --color-now-open: var(--now-open);
+  --color-upcoming: var(--upcoming);
+  --color-closed: var(--closed);
+  --color-error: var(--error);
+
+  --color-now-open-soft: var(--now-open-soft);
+  --color-now-open-ink: var(--now-open-ink);
+  --color-upcoming-soft: var(--upcoming-soft);
+  --color-upcoming-ink: var(--upcoming-ink);
+  --color-closed-soft: var(--closed-soft);
+  --color-closed-ink: var(--closed-ink);
 
   /* 타이포 스케일 */
   --text-h1: 28px;
@@ -45,10 +175,15 @@
   --text-xs: 12px;
   --text-micro: 10px;
 
-  /* 라운드 */
-  --radius-button: 8px;
-  --radius-input: 12px;
-  --radius-sheet: 14px;
+  /* 라운드 — iOS풍으로 상향 */
+  --radius-button: 12px;
+  --radius-input: 14px;
+  --radius-sheet: 22px;
+
+  /* Elevation — 시맨틱 elev-* 참조 */
+  --shadow-card: var(--elev-card);
+  --shadow-nav: var(--elev-nav);
+  --shadow-sheet: var(--elev-sheet);
 
   --font-sans: "Pretendard", "Noto Sans KR", ui-sans-serif, system-ui,
     -apple-system, sans-serif;
@@ -63,4 +198,96 @@ body {
   color: var(--color-text);
   font-family: var(--font-sans);
   letter-spacing: -0.04em; /* tracking -4% */
+  /* 노치 안전영역 — 상단은 전역 패딩, 하단은 고정 탭바/시트가 각자 처리 */
+  padding-top: env(safe-area-inset-top);
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* iOS 네이티브풍 반투명 블러 표면(탭바/헤더) */
+.glass {
+  background: color-mix(in srgb, var(--color-surface) 78%, transparent);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+}
+
+/* 진입 애니메이션 — 바텀시트 슬라이드업(iOS 스프링 이징) + 백드롭 페이드 */
+@keyframes sheet-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+.animate-sheet-up {
+  animation: sheet-up 0.34s cubic-bezier(0.32, 0.72, 0, 1);
+  will-change: transform;
+}
+.animate-fade-in {
+  animation: fade-in 0.22s ease-out;
+}
+
+/* 라우트 전환 진입 — <main> 에만 적용(네비게이션마다 재마운트).
+ * 고정 요소(TabBar<nav>·시트)는 main 밖/이후라 containing-block 튐 없음. */
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+main {
+  animation: enter-up 0.26s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+/* 스켈레톤 shimmer */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-fill-secondary);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-surface) 60%, transparent),
+    transparent
+  );
+  animation: shimmer 1.4s infinite;
+}
+
+/* 크로스도큐먼트 View Transition (지원 브라우저 한정, 점진적 향상) */
+@view-transition {
+  navigation: auto;
+}
+
+/* 접근성: 모션 최소화 선호 시 전환/애니메이션 억제 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
 }

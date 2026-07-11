@@ -59,7 +59,7 @@ export default function MorePage() {
         <Header variant="title" title="더보기" />
 
         {/* 설정 */}
-        <div className="rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
+        <div className="rounded-input bg-surface p-4 shadow-card">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
               <span className="text-body text-text">오늘 자유수영 아침 요약</span>
@@ -72,7 +72,7 @@ export default function MorePage() {
             />
           </div>
           {pushError && (
-            <p className="mt-3 text-xs leading-relaxed text-red-500">
+            <p className="mt-3 text-xs leading-relaxed text-error">
               {pushError}
             </p>
           )}
@@ -84,7 +84,7 @@ export default function MorePage() {
         </div>
 
         {/* 메뉴 */}
-        <div className="rounded-input bg-surface px-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
+        <div className="rounded-input bg-surface px-4 shadow-card">
           {[
             { label: '내 제보 내역', href: '/reports' },
             { label: '데이터 기준 안내', href: '/data-policy' },
@@ -122,7 +122,7 @@ export default function MorePage() {
         </div>
 
         {/* 데이터 기준 안내 */}
-        <div className="rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
+        <div className="rounded-input bg-surface p-4 shadow-card">
           <h2 className="text-sm font-bold text-text">데이터는 이렇게 관리해요</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-text-sub">
             시간표·요금은 하남도시공사 공식 페이지 기준이며 운영자가 주기적으로

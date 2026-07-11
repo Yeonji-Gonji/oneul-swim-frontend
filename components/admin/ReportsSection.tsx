@@ -75,7 +75,7 @@ export function ReportsSection({ request }: { request: AdminRequest }) {
             onClick={() => setFilter(f.key)}
             className={`rounded-full border px-3 py-1.5 text-sm ${
               filter === f.key
-                ? 'border-primary bg-primary text-white'
+                ? 'border-primary bg-primary-fill text-white'
                 : 'border-line bg-surface text-text'
             }`}
           >
@@ -84,7 +84,7 @@ export function ReportsSection({ request }: { request: AdminRequest }) {
         ))}
       </div>
 
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-error">{error}</p>}
 
       {reports.length === 0 && !error && (
         <p className="rounded-input bg-surface p-4 text-sm text-text-sub">

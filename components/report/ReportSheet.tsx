@@ -63,9 +63,9 @@ export function ReportSheet({
             type="button"
             aria-label="닫기"
             onClick={close}
-            className="absolute inset-0 bg-black/40"
+            className="animate-fade-in absolute inset-0 bg-black/40"
           />
-          <div className="relative rounded-t-sheet bg-surface px-5 pb-6 pt-3">
+          <div className="animate-sheet-up relative rounded-t-sheet bg-surface px-5 pt-3 pb-[calc(1.5rem+env(safe-area-inset-bottom))] shadow-sheet">
             <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-line" />
 
             {state === 'sent' ? (
@@ -115,7 +115,7 @@ export function ReportSheet({
                 </label>
 
                 {state === 'error' && (
-                  <p className="mt-3 text-sm text-red-500">
+                  <p className="mt-3 text-sm text-error">
                     전송에 실패했어요. 잠시 후 다시 시도해 주세요.
                   </p>
                 )}

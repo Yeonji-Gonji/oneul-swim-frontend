@@ -86,7 +86,7 @@ export default async function SidoPage({
               <Link
                 key={sigungu}
                 href={`/pools/${encodeURIComponent(sido)}/${encodeURIComponent(sigungu)}`}
-                className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3.5 py-2 text-sm text-text shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)] transition active:scale-[0.99]"
+                className="inline-flex items-center gap-1.5 rounded-full bg-surface px-3.5 py-2 text-sm text-text shadow-card transition active:scale-[0.99]"
               >
                 <span className="font-bold">{sigungu}</span>
                 <span className="text-text-sub">{count}</span>

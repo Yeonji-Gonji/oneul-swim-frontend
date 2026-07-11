@@ -15,7 +15,7 @@ const TABS = [
 export function TabBar({ active = 'home' }: { active?: string }) {
   return (
     <nav className="fixed inset-x-0 bottom-0 z-10">
-      <div className="mx-auto flex w-full max-w-md items-center justify-between rounded-t-sheet bg-surface px-10 pb-3 pt-2 shadow-[0px_-1px_2px_rgba(0,0,0,0.1)]">
+      <div className="glass mx-auto flex w-full max-w-md items-center justify-between rounded-t-sheet border-t border-line px-10 pt-2 pb-[calc(0.5rem+env(safe-area-inset-bottom))] shadow-nav">
         {TABS.map(({ key, label, Icon, href }) => {
           const isActive = key === active;
           const inner = (

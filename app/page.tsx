@@ -1,4 +1,5 @@
 import { HomeClient } from '@/components/home/HomeClient';
+import { PullToRefresh } from '@/components/home/PullToRefresh';
 import { ViewToggle } from '@/components/home/ViewToggle';
 import { TabBar } from '@/components/layout/TabBar';
 import { JsonLd } from '@/components/seo/JsonLd';
@@ -23,7 +24,9 @@ export default async function HomePage() {
     <>
       <JsonLd data={websiteSchema} />
       <main className="mx-auto w-full max-w-md px-6 pb-24 pt-12">
-        <HomeClient pools={pools} headerRight={<ViewToggle active="list" />} />
+        <PullToRefresh>
+          <HomeClient pools={pools} headerRight={<ViewToggle active="list" />} />
+        </PullToRefresh>
       </main>
       <TabBar active="home" />
     </>

@@ -44,7 +44,7 @@ export function PoolsSection({ request }: { request: AdminRequest }) {
     load();
   }, [load]);
 
-  if (error) return <p className="text-sm text-red-500">{error}</p>;
+  if (error) return <p className="text-sm text-error">{error}</p>;
   if (!data) return <p className="text-sm text-text-sub">불러오는 중…</p>;
 
   return (

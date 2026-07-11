@@ -14,7 +14,7 @@ export function FeeCard({ pool }: { pool: Pool }) {
   // 요금 정보가 아예 없으면 준비중 안내
   if (!fees || (fullAdult == null && halfAdult == null)) {
     return (
-      <section className="flex w-full flex-col gap-2.5 rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
+      <section className="flex w-full flex-col gap-2.5 rounded-input bg-surface p-4 shadow-card">
         <h2 className="text-body font-bold text-text">자유수영 이용권</h2>
         <p className="text-sm text-text-sub">
           요금 정보가 아직 준비되지 않았어요. 아시는 정보가 있다면 제보해 주세요.
@@ -24,7 +24,7 @@ export function FeeCard({ pool }: { pool: Pool }) {
   }
 
   return (
-    <section className="flex w-full flex-col gap-2.5 rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
+    <section className="flex w-full flex-col gap-2.5 rounded-input bg-surface p-4 shadow-card">
       <h2 className="text-body font-bold text-text">자유수영 이용권</h2>
       {tiers.has('full') && fullAdult != null && (
         <FeeRow label="전일권 (성인)" value={won(fullAdult)} />

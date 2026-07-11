@@ -36,7 +36,7 @@ export default async function PoolsIndexPage() {
             <Link
               key={sido}
               href={`/pools/${encodeURIComponent(sido)}`}
-              className="flex items-center justify-between rounded-input bg-surface px-4 py-3.5 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)] transition active:scale-[0.99]"
+              className="flex items-center justify-between rounded-input bg-surface px-4 py-3.5 shadow-card transition active:scale-[0.99]"
             >
               <span className="text-body font-bold text-text">{sido}</span>
               <span className="shrink-0 text-sm text-text-sub">{count}곳</span>

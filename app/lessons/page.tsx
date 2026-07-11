@@ -68,7 +68,7 @@ export default function LessonsPage() {
         <Header variant="title" title="강습 접수 소식 알림" />
 
         {/* 단일 서버구독 토글 — 접수 소식이 열리면 운영자가 전체 발송 */}
-        <div className="rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
+        <div className="rounded-input bg-surface p-4 shadow-card">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
               <span className="text-body text-text">
@@ -85,7 +85,7 @@ export default function LessonsPage() {
             />
           </div>
           {pushError && (
-            <p className="mt-3 text-xs leading-relaxed text-red-500">
+            <p className="mt-3 text-xs leading-relaxed text-error">
               {pushError}
             </p>
           )}
@@ -103,7 +103,7 @@ export default function LessonsPage() {
             return (
               <div
                 key={key}
-                className="flex flex-col gap-2.5 rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]"
+                className="flex flex-col gap-2.5 rounded-input bg-surface p-4 shadow-card"
               >
                 <div className="flex flex-col gap-1">
                   <span className="text-body font-bold text-text">

@@ -15,7 +15,7 @@ export default function DataPolicyPage() {
       <main className="mx-auto flex w-full max-w-md flex-col gap-4 px-6 pb-24 pt-12">
         <Header variant="back" title="데이터 기준 안내" backHref="/more" />
 
-        <section className="rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
+        <section className="rounded-input bg-surface p-4 shadow-card">
           <h2 className="text-sm font-bold text-text">어디서 가져오나요</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-text-sub">
             시간표·요금·운영 정보는 하남도시공사 공식 홈페이지에 공개된 자료를
@@ -25,7 +25,7 @@ export default function DataPolicyPage() {
           </p>
         </section>
 
-        <section className="rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
+        <section className="rounded-input bg-surface p-4 shadow-card">
           <h2 className="text-sm font-bold text-text">어떻게 검증하나요</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-text-sub">
             운영자가 공식 페이지를 주기적으로 점검해 변경 사항을 반영하고,
@@ -34,7 +34,7 @@ export default function DataPolicyPage() {
           </p>
         </section>
 
-        <section className="rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
+        <section className="rounded-input bg-surface p-4 shadow-card">
           <h2 className="text-sm font-bold text-text">시설별 확인 일자</h2>
           <ul className="mt-2 flex flex-col gap-1.5">
             {pools.map((p) => (

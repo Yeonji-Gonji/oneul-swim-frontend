@@ -19,6 +19,7 @@ import {
   IconPhone,
   IconNavigation,
   IconBell,
+  IconFlag,
 } from '@/components/ui/icons';
 
 export const dynamic = 'force-dynamic';
@@ -161,13 +162,15 @@ export default async function PoolDetailPage({
       )}
 
       {listing ? (
-        <div className="flex w-full flex-col gap-1.5 rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
-          <p className="text-body font-bold text-text">
-            자유수영 정보 준비중
-          </p>
+        <div className="flex w-full flex-col items-center gap-3 rounded-input bg-surface px-4 py-8 text-center shadow-card">
+          <span className="flex size-12 items-center justify-center rounded-full bg-primary-5 text-primary">
+            <IconFlag className="size-6" />
+          </span>
+          <p className="text-body font-bold text-text">자유수영 정보 준비중</p>
           <p className="text-sm leading-relaxed text-text-sub">
-            이 수영장은 기본 정보만 등록돼 있어요. 자유수영 시간표·요금을
-            아시면 아래 제보로 알려주시면 반영할게요.
+            이 수영장은 기본 정보만 등록돼 있어요.
+            <br />
+            자유수영 시간표·요금을 아시면 아래 제보로 알려주세요.
           </p>
         </div>
       ) : (

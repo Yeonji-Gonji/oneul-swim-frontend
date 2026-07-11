@@ -45,7 +45,7 @@ export function FreshnessSection({ request }: { request: AdminRequest }) {
 
   return (
     <section className="flex flex-col gap-3">
-      {error && <p className="text-sm text-red-500">{error}</p>}
+      {error && <p className="text-sm text-error">{error}</p>}
       {alerts.length === 0 && !error && (
         <p className="rounded-input bg-surface p-4 text-sm text-text-sub">
           미처리 신선도 알림이 없어요.

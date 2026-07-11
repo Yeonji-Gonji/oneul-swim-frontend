@@ -38,7 +38,7 @@ export function PoolCard({
   return (
     <Link
       href={`/pool/${pool.id}`}
-      className="flex w-full flex-col items-start gap-2.5 rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)] transition active:scale-[0.99]"
+      className="flex w-full flex-col items-start gap-2.5 rounded-input bg-surface p-4 shadow-card transition duration-150 active:scale-[0.98]"
     >
       <div className="flex w-full items-center justify-between">
         <span className="text-body font-bold text-text">{pool.name}</span>
@@ -47,9 +47,7 @@ export function PoolCard({
         </span>
       </div>
       <StatusBadge status={status} />
-      <span className="text-sm text-text">
-        {summary || '자유수영 정보 준비중'}
-      </span>
+      {summary && <span className="text-sm text-text">{summary}</span>}
       <FreshnessTag updatedAt={pool.updatedAt} />
     </Link>
   );

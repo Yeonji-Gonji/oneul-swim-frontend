@@ -130,7 +130,7 @@ export function MapView({ pools }: { pools: Pool[] }) {
       )}
 
       {/* 미니카드 */}
-      <div className="mt-3 flex flex-col gap-2 rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
+      <div className="mt-3 flex flex-col gap-2 rounded-input bg-surface p-4 shadow-card">
         <div className="flex items-center justify-between">
           <span className="text-body font-bold text-text">{selected.name}</span>
           <span className="text-sm text-text-sub">{areaLabel(selected)}</span>
