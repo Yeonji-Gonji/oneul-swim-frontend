@@ -39,7 +39,7 @@ export async function GET() {
 - [지역별 자유수영장 인덱스](${SITE_URL}/pools)
 ${topSidoLinks}
 - [강습 접수 소식 알림](${SITE_URL}/lessons)
-- [지도로 보기](${SITE_URL}/map)
+- [내 주변 지도로 찾기](${SITE_URL}/)
 `;
 
   return new Response(body, {

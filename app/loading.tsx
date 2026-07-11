@@ -1,26 +1,29 @@
-import { Skeleton, PoolCardSkeleton } from '@/components/ui/Skeleton';
+import { Skeleton } from '@/components/ui/Skeleton';
 
-/** 홈 로딩 스켈레톤 — force-dynamic 데이터 로드 동안 표시(HomeClient 레이아웃과 정렬). */
+/** 맵-퍼스트 홈 로딩 스켈레톤 — 전체 지도 로드/데이터 fetch 동안 표시. */
 export default function HomeLoading() {
   return (
-    <main className="mx-auto w-full max-w-md px-6 pt-12 pb-24">
-      <div className="flex flex-col gap-4">
-        <div className="flex h-11 items-center justify-between">
-          <Skeleton className="h-6 w-20 rounded-md" />
-          <Skeleton className="h-9 w-32 rounded-full" />
-        </div>
-        <div className="flex gap-2">
-          <Skeleton className="h-9 w-20 rounded-full" />
-          <Skeleton className="h-9 w-16 rounded-full" />
-          <Skeleton className="h-9 w-16 rounded-full" />
-        </div>
-        <Skeleton className="h-6 w-40 rounded-md" />
-        <div className="flex flex-col gap-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <PoolCardSkeleton key={i} />
-          ))}
-        </div>
+    <div className="fixed inset-0 mx-auto w-full max-w-md overflow-hidden bg-bg">
+      {/* 지도 자리 */}
+      <div className="absolute inset-0 skeleton" />
+      {/* 상단 플로팅 필터 자리 */}
+      <div
+        className="absolute inset-x-0 top-0 flex flex-col gap-2 px-3"
+        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.75rem)' }}
+      >
+        <Skeleton className="h-10 w-28 rounded-full" />
+        <Skeleton className="h-10 w-full rounded-full" />
       </div>
-    </main>
+      {/* 바텀시트 자리 */}
+      <div
+        className="absolute inset-x-0 flex flex-col gap-3 rounded-t-sheet bg-surface p-5 shadow-sheet"
+        style={{ bottom: 'var(--tabbar-h)', height: '32%' }}
+      >
+        <div className="mx-auto h-1 w-10 rounded-full bg-line" />
+        <Skeleton className="h-6 w-40 rounded-md" />
+        <Skeleton className="h-16 w-full rounded-input" />
+        <Skeleton className="h-16 w-full rounded-input" />
+      </div>
+    </div>
   );
 }

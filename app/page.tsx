@@ -1,12 +1,10 @@
-import { HomeClient } from '@/components/home/HomeClient';
-import { PullToRefresh } from '@/components/home/PullToRefresh';
-import { ViewToggle } from '@/components/home/ViewToggle';
+import { MapExplorer } from '@/components/map/MapExplorer';
 import { TabBar } from '@/components/layout/TabBar';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { getPoolsData } from '@/lib/pools-data';
 import { SITE_NAME, SITE_URL } from '@/constants/site';
 
-// "지금 상태"를 보여주는 화면이므로 매 요청 시 최신 데이터(API 우선)를 읽는다.
+// "지금 상태" + 위치 기반 지도이므로 매 요청 시 최신 데이터(API 우선)를 읽는다.
 export const dynamic = 'force-dynamic';
 
 // 홈 WebSite JSON-LD — 사이트 아이덴티티만 간결하게.
@@ -23,11 +21,7 @@ export default async function HomePage() {
   return (
     <>
       <JsonLd data={websiteSchema} />
-      <main className="mx-auto w-full max-w-md px-6 pb-24 pt-12">
-        <PullToRefresh>
-          <HomeClient pools={pools} headerRight={<ViewToggle active="list" />} />
-        </PullToRefresh>
-      </main>
+      <MapExplorer pools={pools} />
       <TabBar active="home" />
     </>
   );

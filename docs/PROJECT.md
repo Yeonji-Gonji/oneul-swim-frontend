@@ -1,8 +1,8 @@
 # PROJECT: oneul-swim-frontend 현황판
 
-> 갱신일: 2026-07-09 (P0~P4 코드 구현 완료)
+> 갱신일: 2026-07-11 (프론트 리뉴얼 Phase A~C 완료)
 > 히스토리·의사결정 정본: obsidian vault `projects/oneul-swim.md` (private)
-> 로드맵: [plan-2026-07-enhancement.md](./plan-2026-07-enhancement.md)
+> 로드맵: [plan-2026-07-frontend-renewal.md](./plan-2026-07-frontend-renewal.md) · [plan-2026-07-enhancement.md](./plan-2026-07-enhancement.md)
 
 ## 현재 상태
 
@@ -23,6 +23,8 @@
 
 ## 최근 완료
 
+- 2026-07-11 프론트 리뉴얼 **Phase E: 맵-퍼스트 레이아웃 재배치**(Apple Maps 최신 UI 레퍼런스): 홈을 **내 위치 기반 지도-퍼스트**로 전면 재배치. `MapExplorer`(풀스크린 지도+geolocation+상태색 마커+MarkerClusterer+현위치+선택 미니카드) + `MapSheet`(3단 detent 드래그 바텀시트) + 플로팅 글라스(.glass-panel) 지역/날짜 필터 + `lib/geo.ts`. `/map`→홈 리다이렉트, 구 HomeClient·FilterChips·PullToRefresh·ViewToggle·MapView 삭제(PoolCard는 /pools SEO용 존치). 검증 typecheck/lint/test29/build232 그린. ⚠️ 지도 타일·마커·geolocation 실제 렌더는 로컬 키 부재로 미검증 → **배포/실기기 시각검증 필요**. (D 로그인보다 먼저 착수 = 사용자 지시)
+- 2026-07-11 프론트 리뉴얼 Phase B(디자인)·C(UX): iOS풍 토큰 개편 + **다크모드**(prefers-color-scheme, `[data-theme]` 토글 훅) + elevation/shadow 토큰 + safe-area(env inset·viewportFit cover) / 컴포넌트 일괄 리스타일(버튼·칩·카드·글래스 탭바·바텀시트) / 스켈레톤 로딩(loading.tsx)·`<main>` 라우트 전환 애니·pull-to-refresh(router.refresh)·listing 빈 상태 개선. 검증 그린(typecheck/lint/test29/build231) + 라이트·다크 시각 확인. 상세 로드맵 [plan-2026-07-frontend-renewal.md](./plan-2026-07-frontend-renewal.md). ⚠️ 커밋·푸시는 사용자 몫.
 - 2026-07-11 어드민 시간표 초안 검수 UI + 카카오 로그인: `/admin`에 "시간표 초안" 탭(승인/반려·근거 스니펫 표시), 카카오 로그인 게이트(본인 계정만 백엔드가 `ADMIN_TOKEN` 발급 → 기존 Bearer 인증 재사용). 기존 토큰 입력은 비상용 폴백으로 유지.
 - 2026-07-11 P4: `SOON_THRESHOLD_MIN` 임계값 실제 로직에 적용 (데드코드 정리)
 - 2026-07-11 P4: 디자인 토큰 이중 관리 해소 (`globals.css` @theme 단일 소스로 통합)
@@ -36,6 +38,9 @@
 ## 알려진 이슈 / 남은 일
 
 - 좌표·주소 null 이슈는 해소됨(4곳 전부 lat/lng/address 존재)
+- 리뉴얼 진행(로드맵 참조): 프론트 단독 **A~C + E(맵-퍼스트) 구현 완료**. 남은 **D 카카오 로그인·회원제**(비회원=열람+제보만 / 회원=구독+일일 자유수영 알림)·**F TWA 스토어**는 백엔드/외부 등록 필요 → 사용자 액션 대기.
+- ⚠️ Phase E 지도 렌더링 시각검증 미완: 로컬 `NEXT_PUBLIC_KAKAO_MAP_KEY` 부재로 지도 폴백만 확인. 배포(Vercel, 키 등록)·실기기에서 지도 타일·마커·클러스터·geolocation·드래그 시트 확인 필요.
+- (선택) 다크모드 수동 토글 UI: 토큰·`[data-theme]` 훅은 준비됨. 현재는 시스템 설정 자동 추종. 노플래시 스크립트+토글 추가 시 `/more`에 배치 예정.
 
 ## 링크
 

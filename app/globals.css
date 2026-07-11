@@ -210,6 +210,27 @@ body {
   backdrop-filter: saturate(180%) blur(20px);
 }
 
+/* Apple 지도 최신 UI풍 플로팅 글라스 패널(지도 위 필터·컨트롤) — 헤비 blur + 헤어라인 보더 */
+.glass-panel {
+  background: color-mix(in srgb, var(--color-surface) 72%, transparent);
+  -webkit-backdrop-filter: saturate(180%) blur(24px);
+  backdrop-filter: saturate(180%) blur(24px);
+  border: 1px solid color-mix(in srgb, var(--color-line) 55%, transparent);
+}
+
+/* 하단 탭바 대략 높이(safe-area 포함) — 맵 바텀시트가 탭바 위에 앉도록 */
+:root {
+  --tabbar-h: calc(58px + env(safe-area-inset-bottom));
+}
+
+/* 스크롤바 숨김(가로 스크롤 칩 행 등) */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 /* 진입 애니메이션 — 바텀시트 슬라이드업(iOS 스프링 이징) + 백드롭 페이드 */
 @keyframes sheet-up {
   from {

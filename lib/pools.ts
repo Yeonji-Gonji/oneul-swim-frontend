@@ -62,6 +62,16 @@ export const isSessionToday = (
   return true;
 };
 
+/**
+ * 특정 요일에 운영되는 자유수영 세션들 (요일 필터용).
+ * weeksOfMonth(특정 주차)는 구체 날짜가 없는 요일 필터에선 무시하는 근사 — "그 요일에 운영이 있는가" 판정용.
+ */
+export const sessionsOnWeekday = (
+  pool: Pool,
+  dayCode: FreeSwimSession['dayCodes'][number],
+): FreeSwimSession[] =>
+  (pool.freeSwim?.sessions ?? []).filter((s) => s.dayCodes.includes(dayCode));
+
 export type NowStatus =
   | { kind: 'open'; session: FreeSwimSession; endsAt: string } // 🟢 진행 중
   | {

@@ -15,7 +15,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: abs('/'), changeFrequency: 'hourly', priority: 1 },
     { url: abs('/pools'), changeFrequency: 'daily', priority: 0.9 },
     { url: abs('/lessons'), changeFrequency: 'weekly', priority: 0.6 },
-    { url: abs('/map'), changeFrequency: 'daily', priority: 0.7 },
+    // 홈(/)이 지도-퍼스트로 통합됨 — 구 /map 은 홈으로 리다이렉트하므로 색인 제외
   ];
 
   // 지역 페이지: 시도 + (시도,시군구)
