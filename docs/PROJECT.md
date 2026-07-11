@@ -16,13 +16,14 @@
 
 ## 사용자 액션 대기 (코드 완료, 외부 설정만 남음)
 
-- Vercel 환경변수: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY`(기존), `NEXT_PUBLIC_GA_ID`(측정, 선택) 등록 + 재배포
+- Vercel 환경변수: `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY`(기존), `NEXT_PUBLIC_GA_ID`(측정, 선택), `NEXT_PUBLIC_KAKAO_REST_KEY`(어드민 카카오 로그인) 등록 + 재배포
 - 실기기(Android Chrome) 푸시 구독 → 다음날 08:00 아침 요약 수신 확인
 - 백엔드 `ADMIN_TOKEN` 설정 후 어드민 로그인에 사용
 - TWA 스토어 출시: 실서명 SHA256 → assetlinks 교체 → 등록 (docs/twa-release.md)
 
 ## 최근 완료
 
+- 2026-07-11 어드민 시간표 초안 검수 UI + 카카오 로그인: `/admin`에 "시간표 초안" 탭(승인/반려·근거 스니펫 표시), 카카오 로그인 게이트(본인 계정만 백엔드가 `ADMIN_TOKEN` 발급 → 기존 Bearer 인증 재사용). 기존 토큰 입력은 비상용 폴백으로 유지.
 - 2026-07-11 P4: `SOON_THRESHOLD_MIN` 임계값 실제 로직에 적용 (데드코드 정리)
 - 2026-07-11 P4: 디자인 토큰 이중 관리 해소 (`globals.css` @theme 단일 소스로 통합)
 
