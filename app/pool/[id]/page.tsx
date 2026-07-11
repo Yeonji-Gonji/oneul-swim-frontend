@@ -25,12 +25,13 @@ export default async function PoolDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const { pools, freeSwimPriceTiers } = await getPoolsData();
+  const { pools } = await getPoolsData();
   const pool = pools.find((p) => p.id === id);
   if (!pool) redirect('/');
 
   const now = nowInSeoul();
   const status = getPoolNowStatus(pool, now);
+  const listing = !pool.freeSwim || pool.dataStatus === 'listing';
   const kakaoTo =
     pool.lat != null && pool.lng != null
       ? `https://map.kakao.com/link/to/${encodeURIComponent(pool.name)},${pool.lat},${pool.lng}`
@@ -51,9 +52,22 @@ export default async function PoolDetailPage({
         </div>
       )}
 
-      <DaySchedule pool={pool} />
-
-      <FeeCard pool={pool} priceTiers={freeSwimPriceTiers} />
+      {listing ? (
+        <div className="flex w-full flex-col gap-1.5 rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
+          <p className="text-body font-bold text-text">
+            자유수영 정보 준비중
+          </p>
+          <p className="text-sm leading-relaxed text-text-sub">
+            이 수영장은 기본 정보만 등록돼 있어요. 자유수영 시간표·요금을
+            아시면 아래 제보로 알려주시면 반영할게요.
+          </p>
+        </div>
+      ) : (
+        <>
+          <DaySchedule pool={pool} />
+          <FeeCard pool={pool} />
+        </>
+      )}
 
       <div className="flex w-full gap-2.5">
         <a href={`tel:${pool.phone}`} className={cn(buttonClass('medium'), 'flex-1')}>

@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { getPoolNowStatus, type NowStatus } from '@/lib/pools';
-import type { FreeSwimTier, Pool, PriceByTarget } from '@/lib/types';
+import type { Pool } from '@/lib/types';
 import { nowInSeoul } from '@/lib/time';
 import { formatWon, tierLabel } from '@/lib/format';
 import { StatusBadge } from '@/components/ui/StatusBadge';
@@ -15,17 +15,25 @@ const STATUS_COLOR: Record<NowStatus['kind'], string> = {
   soon: '#F0A231',
   'closed-today': '#9797A0',
   'none-today': '#9797A0',
+  listing: '#9797A0',
 };
 
-function priceSummary(
-  pool: Pool,
-  priceTiers: Record<FreeSwimTier, PriceByTarget>,
-): string {
-  const tiers = new Set(pool.freeSwim.sessions.map((s) => s.tier));
-  return (['full', 'half'] as const)
-    .filter((t) => tiers.has(t))
-    .map((t) => `${tierLabel(t, true)} ${formatWon(priceTiers[t].성인)}`)
-    .join(' · ');
+/** 지역 표시 라벨 — 시군구 우선 */
+function areaLabel(pool: Pool): string {
+  return pool.sigungu ?? pool.region ?? pool.sido ?? '';
+}
+
+function priceSummary(pool: Pool): string {
+  const sessions = pool.freeSwim?.sessions ?? [];
+  const fees = pool.fees;
+  if (!fees || sessions.length === 0) return '자유수영 정보 준비중';
+  const tiers = new Set(sessions.map((s) => s.tier));
+  return (
+    (['full', 'half'] as const)
+      .filter((t) => tiers.has(t) && fees[t]?.성인 != null)
+      .map((t) => `${tierLabel(t, true)} ${formatWon(fees[t]!.성인!)}`)
+      .join(' · ') || '자유수영 정보 준비중'
+  );
 }
 
 /**
@@ -33,13 +41,7 @@ function priceSummary(
  * 데이터(pools/priceTiers)는 서버 컴포넌트가 API 우선 로더로 읽어 주입한다(폴백 시 정적).
  * Kakao Maps JS SDK 사용 — NEXT_PUBLIC_KAKAO_MAP_KEY 필요. 키 없으면 권역 핀 폴백.
  */
-export function MapView({
-  pools,
-  priceTiers,
-}: {
-  pools: Pool[];
-  priceTiers: Record<FreeSwimTier, PriceByTarget>;
-}) {
+export function MapView({ pools }: { pools: Pool[] }) {
   const now = useMemo(() => nowInSeoul(), []);
   const [selected, setSelected] = useState(pools[0]);
   const [failed, setFailed] = useState(false);
@@ -65,7 +67,7 @@ export function MapView({
           const color = STATUS_COLOR[getPoolNowStatus(p, now).kind];
           const pin = document.createElement('div');
           pin.style.cssText = `display:flex;align-items:center;gap:4px;background:#fff;border:2px solid ${color};border-radius:999px;padding:3px 8px;font-size:12px;font-weight:700;color:#2a2d34;box-shadow:0 1px 4px rgba(0,0,0,.2);cursor:pointer`;
-          pin.innerHTML = `<span style="width:8px;height:8px;border-radius:999px;background:${color}"></span>${p.region}`;
+          pin.innerHTML = `<span style="width:8px;height:8px;border-radius:999px;background:${color}"></span>${areaLabel(p)}`;
           pin.addEventListener('click', () => setSelected(p));
           new kakao.maps.CustomOverlay({
             position: new kakao.maps.LatLng(p.lat, p.lng),
@@ -119,7 +121,7 @@ export function MapView({
                     className="size-2 rounded-full"
                     style={{ backgroundColor: color }}
                   />
-                  {p.region}
+                  {areaLabel(p)}
                 </button>
               );
             })}
@@ -131,12 +133,10 @@ export function MapView({
       <div className="mt-3 flex flex-col gap-2 rounded-input bg-surface p-4 shadow-[1px_1px_4px_0px_rgba(0,0,0,0.12)]">
         <div className="flex items-center justify-between">
           <span className="text-body font-bold text-text">{selected.name}</span>
-          <span className="text-sm text-text-sub">{selected.region}</span>
+          <span className="text-sm text-text-sub">{areaLabel(selected)}</span>
         </div>
         <StatusBadge status={getPoolNowStatus(selected, now)} />
-        <span className="text-sm text-text">
-          {priceSummary(selected, priceTiers)}
-        </span>
+        <span className="text-sm text-text">{priceSummary(selected)}</span>
       </div>
     </div>
   );

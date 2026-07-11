@@ -17,6 +17,10 @@ const TARGETS: (keyof PriceByTarget)[] = [
   '어린이',
   '장애유공자',
 ];
+const EMPTY_TIERS: Record<FreeSwimTier, PriceByTarget> = {
+  full: { 성인: 0, 청소년: 0, 경로: 0, 어린이: 0, 장애유공자: 0 },
+  half: { 성인: 0, 청소년: 0, 경로: 0, 어린이: 0, 장애유공자: 0 },
+};
 
 /** 데이터 수정 — 시설 개별 필드(PATCH /admin/pools/:id) + 공통 요금표(PUT /admin/fees) */
 export function PoolsSection({ request }: { request: AdminRequest }) {
@@ -46,7 +50,11 @@ export function PoolsSection({ request }: { request: AdminRequest }) {
   return (
     <section className="flex flex-col gap-6">
       <PoolEditor pools={data.pools} request={request} onSaved={load} />
-      <FeesEditor tiers={data.freeSwimPriceTiers} request={request} onSaved={load} />
+      <FeesEditor
+        tiers={data.freeSwimPriceTiers ?? EMPTY_TIERS}
+        request={request}
+        onSaved={load}
+      />
     </section>
   );
 }
@@ -68,6 +76,7 @@ function PoolEditor({
   const [laneInfo, setLaneInfo] = useState('');
   const [updatedAt, setUpdatedAt] = useState('');
   const [freeSwimJson, setFreeSwimJson] = useState('');
+  const [feesJson, setFeesJson] = useState('');
   const [msg, setMsg] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -79,7 +88,8 @@ function PoolEditor({
     setPhone(pool.phone ?? '');
     setLaneInfo(pool.laneInfo ?? '');
     setUpdatedAt(pool.updatedAt ?? '');
-    setFreeSwimJson(JSON.stringify(pool.freeSwim, null, 2));
+    setFreeSwimJson(JSON.stringify(pool.freeSwim ?? { sessions: [] }, null, 2));
+    setFeesJson(JSON.stringify(pool.fees ?? null, null, 2));
     setMsg(null);
   }, [pool]);
   /* eslint-enable react-hooks/set-state-in-effect */
@@ -87,17 +97,26 @@ function PoolEditor({
   const save = async () => {
     setMsg(null);
     let freeSwim: Pool['freeSwim'];
+    let fees: Pool['fees'];
     try {
       freeSwim = JSON.parse(freeSwimJson);
+      fees = JSON.parse(feesJson);
     } catch {
-      setMsg('freeSwim JSON 형식이 올바르지 않아 저장하지 않았어요.');
+      setMsg('freeSwim/fees JSON 형식이 올바르지 않아 저장하지 않았어요.');
       return;
     }
     setBusy(true);
     try {
       const res = await request(`/admin/pools/${id}`, {
         method: 'PATCH',
-        body: JSON.stringify({ notice, phone, laneInfo, updatedAt, freeSwim }),
+        body: JSON.stringify({
+          notice,
+          phone,
+          laneInfo,
+          updatedAt,
+          freeSwim,
+          fees,
+        }),
       });
       if (!res.ok) throw new Error();
       setMsg('저장했어요.');
@@ -158,6 +177,13 @@ function PoolEditor({
           value={freeSwimJson}
           onChange={(e) => setFreeSwimJson(e.target.value)}
           className="h-48 w-full resize-none rounded-input border border-line bg-bg p-2.5 font-mono text-xs text-text"
+        />
+      </Field>
+      <Field label="요금표(fees, JSON — 시설별. 없으면 null)">
+        <textarea
+          value={feesJson}
+          onChange={(e) => setFeesJson(e.target.value)}
+          className="h-40 w-full resize-none rounded-input border border-line bg-bg p-2.5 font-mono text-xs text-text"
         />
       </Field>
 

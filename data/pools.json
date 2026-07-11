@@ -7,8 +7,20 @@
     "dayCodeRef": "JS Date.getDay() — 0=일 1=월 2=화 3=수 4=목 5=금 6=토"
   },
   "freeSwimPriceTiers": {
-    "full": { "성인": 3300, "청소년": 2750, "경로": 2640, "어린이": 2200, "장애유공자": 1650 },
-    "half": { "성인": 1650, "청소년": 1380, "경로": 1320, "어린이": 1100, "장애유공자": 830 }
+    "full": {
+      "성인": 3300,
+      "청소년": 2750,
+      "경로": 2640,
+      "어린이": 2200,
+      "장애유공자": 1650
+    },
+    "half": {
+      "성인": 1650,
+      "청소년": 1380,
+      "경로": 1320,
+      "어린이": 1100,
+      "장애유공자": 830
+    }
   },
   "pools": [
     {
@@ -27,36 +39,285 @@
       "updatedAt": "2026-06-01",
       "freeSwim": {
         "sessions": [
-          { "daysLabel": "평일", "dayCodes": [1,2,3,4,5], "start": "06:00", "end": "07:50", "pool": "50m", "capacity": 35, "tier": "full" },
-          { "daysLabel": "평일", "dayCodes": [1,2,3,4,5], "start": "12:00", "end": "12:50", "pool": "50m", "capacity": 140, "tier": "half" },
-          { "daysLabel": "평일", "dayCodes": [1,2,3,4,5], "start": "13:00", "end": "13:50", "pool": "25m", "capacity": 120, "tier": "half" },
-          { "daysLabel": "평일", "dayCodes": [1,2,3,4,5], "start": "14:00", "end": "14:50", "pool": "50m", "capacity": 280, "tier": "half" },
-          { "daysLabel": "평일", "dayCodes": [1,2,3,4,5], "start": "19:00", "end": "19:50", "pool": "50m", "capacity": 35, "tier": "half" },
-          { "daysLabel": "평일", "dayCodes": [1,2,3,4,5], "start": "20:00", "end": "20:50", "pool": "50m", "capacity": 35, "tier": "half" },
-          { "daysLabel": "평일", "dayCodes": [1,2,3,4,5], "start": "21:00", "end": "21:50", "pool": "50m", "capacity": 35, "tier": "half" },
-          { "daysLabel": "토", "dayCodes": [6], "start": "07:00", "end": "08:50", "pool": "25m,50m", "tier": "full" },
-          { "daysLabel": "토", "dayCodes": [6], "start": "10:00", "end": "11:50", "pool": "25m,50m", "tier": "full" },
-          { "daysLabel": "토", "dayCodes": [6], "start": "13:00", "end": "14:50", "pool": "25m,50m", "tier": "full" },
-          { "daysLabel": "토", "dayCodes": [6], "start": "16:00", "end": "17:50", "pool": "25m,50m", "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [2,4], "start": "09:00", "end": "10:50", "pool": "25m,50m", "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [2,4], "start": "11:00", "end": "12:50", "pool": "25m,50m", "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [2,4], "start": "14:00", "end": "15:50", "pool": "25m,50m", "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [2,4], "start": "16:00", "end": "17:50", "pool": "25m,50m", "tier": "full" }
+          {
+            "daysLabel": "평일",
+            "dayCodes": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "start": "06:00",
+            "end": "07:50",
+            "pool": "50m",
+            "capacity": 35,
+            "tier": "full"
+          },
+          {
+            "daysLabel": "평일",
+            "dayCodes": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "start": "12:00",
+            "end": "12:50",
+            "pool": "50m",
+            "capacity": 140,
+            "tier": "half"
+          },
+          {
+            "daysLabel": "평일",
+            "dayCodes": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "start": "13:00",
+            "end": "13:50",
+            "pool": "25m",
+            "capacity": 120,
+            "tier": "half"
+          },
+          {
+            "daysLabel": "평일",
+            "dayCodes": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "start": "14:00",
+            "end": "14:50",
+            "pool": "50m",
+            "capacity": 280,
+            "tier": "half"
+          },
+          {
+            "daysLabel": "평일",
+            "dayCodes": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "start": "19:00",
+            "end": "19:50",
+            "pool": "50m",
+            "capacity": 35,
+            "tier": "half"
+          },
+          {
+            "daysLabel": "평일",
+            "dayCodes": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "start": "20:00",
+            "end": "20:50",
+            "pool": "50m",
+            "capacity": 35,
+            "tier": "half"
+          },
+          {
+            "daysLabel": "평일",
+            "dayCodes": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "start": "21:00",
+            "end": "21:50",
+            "pool": "50m",
+            "capacity": 35,
+            "tier": "half"
+          },
+          {
+            "daysLabel": "토",
+            "dayCodes": [
+              6
+            ],
+            "start": "07:00",
+            "end": "08:50",
+            "pool": "25m,50m",
+            "tier": "full"
+          },
+          {
+            "daysLabel": "토",
+            "dayCodes": [
+              6
+            ],
+            "start": "10:00",
+            "end": "11:50",
+            "pool": "25m,50m",
+            "tier": "full"
+          },
+          {
+            "daysLabel": "토",
+            "dayCodes": [
+              6
+            ],
+            "start": "13:00",
+            "end": "14:50",
+            "pool": "25m,50m",
+            "tier": "full"
+          },
+          {
+            "daysLabel": "토",
+            "dayCodes": [
+              6
+            ],
+            "start": "16:00",
+            "end": "17:50",
+            "pool": "25m,50m",
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              2,
+              4
+            ],
+            "start": "09:00",
+            "end": "10:50",
+            "pool": "25m,50m",
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              2,
+              4
+            ],
+            "start": "11:00",
+            "end": "12:50",
+            "pool": "25m,50m",
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              2,
+              4
+            ],
+            "start": "14:00",
+            "end": "15:50",
+            "pool": "25m,50m",
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              2,
+              4
+            ],
+            "start": "16:00",
+            "end": "17:50",
+            "pool": "25m,50m",
+            "tier": "full"
+          }
         ],
         "monthlyPass": {
-          "성인": 19800, "청소년": 16560, "어린이": 13200,
+          "성인": 19800,
+          "청소년": 16560,
+          "어린이": 13200,
           "note": "월·수·금 기준. 화·목 시간대는 성인 13,200 / 청소년 11,040 / 유아·어린이 8,800"
         }
       },
       "lessons": [
-        { "name": "성인수영(오전)", "daysLabel": "월~금", "time": "06:00~12:50, 15:00~15:50", "capacity": "25m 17명 / 50m 35명", "fee": 73700 },
-        { "name": "성인수영(야간)", "daysLabel": "월·수·금", "time": "19:00~21:50", "fee": 55000 },
-        { "name": "성인수영(야간)", "daysLabel": "화·목", "time": "19:00~21:50", "fee": 46200 },
-        { "name": "유아수영", "daysLabel": "월·수·금 / 화·목", "time": "15:00~15:50", "capacity": "각 10명", "fee": 33000, "note": "화·목반 22,000" },
-        { "name": "초등생수영", "daysLabel": "월·수·금 / 화·목", "time": "16:00~18:50", "fee": 33000, "note": "화·목반 22,000" },
-        { "name": "장애인수영", "daysLabel": "월·수·금 / 화·목", "time": "19:00~19:50", "capacity": "7명", "fee": 33000, "note": "대상·요일별 33,000~55,000" },
-        { "name": "아쿠아로빅", "daysLabel": "월·수 / 화·목 / 금·토", "time": "08:00~15:50", "capacity": "각 90명", "fee": 46200 }
-      ]
+        {
+          "name": "성인수영(오전)",
+          "daysLabel": "월~금",
+          "time": "06:00~12:50, 15:00~15:50",
+          "capacity": "25m 17명 / 50m 35명",
+          "fee": 73700
+        },
+        {
+          "name": "성인수영(야간)",
+          "daysLabel": "월·수·금",
+          "time": "19:00~21:50",
+          "fee": 55000
+        },
+        {
+          "name": "성인수영(야간)",
+          "daysLabel": "화·목",
+          "time": "19:00~21:50",
+          "fee": 46200
+        },
+        {
+          "name": "유아수영",
+          "daysLabel": "월·수·금 / 화·목",
+          "time": "15:00~15:50",
+          "capacity": "각 10명",
+          "fee": 33000,
+          "note": "화·목반 22,000"
+        },
+        {
+          "name": "초등생수영",
+          "daysLabel": "월·수·금 / 화·목",
+          "time": "16:00~18:50",
+          "fee": 33000,
+          "note": "화·목반 22,000"
+        },
+        {
+          "name": "장애인수영",
+          "daysLabel": "월·수·금 / 화·목",
+          "time": "19:00~19:50",
+          "capacity": "7명",
+          "fee": 33000,
+          "note": "대상·요일별 33,000~55,000"
+        },
+        {
+          "name": "아쿠아로빅",
+          "daysLabel": "월·수 / 화·목 / 금·토",
+          "time": "08:00~15:50",
+          "capacity": "각 90명",
+          "fee": 46200
+        }
+      ],
+      "sido": "경기도",
+      "sigungu": "하남시",
+      "fees": {
+        "full": {
+          "성인": 3300,
+          "청소년": 2750,
+          "경로": 2640,
+          "어린이": 2200,
+          "장애유공자": 1650
+        },
+        "half": {
+          "성인": 1650,
+          "청소년": 1380,
+          "경로": 1320,
+          "어린이": 1100,
+          "장애유공자": 830
+        }
+      },
+      "dataStatus": "full"
     },
     {
       "id": "hanam-pungsan",
@@ -73,22 +334,156 @@
       "updatedAt": "2026-06-01",
       "freeSwim": {
         "sessions": [
-          { "daysLabel": "월~목", "dayCodes": [1,2,3,4], "start": "19:00", "end": "19:50", "capacity": 60, "tier": "half" },
-          { "daysLabel": "금", "dayCodes": [5], "start": "08:00", "end": "08:50", "capacity": 60, "tier": "half" },
-          { "daysLabel": "금", "dayCodes": [5], "start": "19:00", "end": "19:50", "capacity": 60, "tier": "half" },
-          { "daysLabel": "토", "dayCodes": [6], "start": "09:00", "end": "10:50", "tier": "full" },
-          { "daysLabel": "토", "dayCodes": [6], "start": "16:00", "end": "17:50", "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [1,3], "start": "09:00", "end": "10:50", "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [1,3], "start": "11:00", "end": "12:50", "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [1,3], "start": "14:00", "end": "15:50", "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [1,3], "start": "16:00", "end": "17:50", "tier": "full" }
+          {
+            "daysLabel": "월~목",
+            "dayCodes": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "start": "19:00",
+            "end": "19:50",
+            "capacity": 60,
+            "tier": "half"
+          },
+          {
+            "daysLabel": "금",
+            "dayCodes": [
+              5
+            ],
+            "start": "08:00",
+            "end": "08:50",
+            "capacity": 60,
+            "tier": "half"
+          },
+          {
+            "daysLabel": "금",
+            "dayCodes": [
+              5
+            ],
+            "start": "19:00",
+            "end": "19:50",
+            "capacity": 60,
+            "tier": "half"
+          },
+          {
+            "daysLabel": "토",
+            "dayCodes": [
+              6
+            ],
+            "start": "09:00",
+            "end": "10:50",
+            "tier": "full"
+          },
+          {
+            "daysLabel": "토",
+            "dayCodes": [
+              6
+            ],
+            "start": "16:00",
+            "end": "17:50",
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              1,
+              3
+            ],
+            "start": "09:00",
+            "end": "10:50",
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              1,
+              3
+            ],
+            "start": "11:00",
+            "end": "12:50",
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              1,
+              3
+            ],
+            "start": "14:00",
+            "end": "15:50",
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              1,
+              3
+            ],
+            "start": "16:00",
+            "end": "17:50",
+            "tier": "full"
+          }
         ]
       },
       "lessons": [
-        { "name": "성인수영", "daysLabel": "월·수·금 / 화·목", "time": "06:00~10:50, 20:00~21:50", "capacity": "레인별 15명", "fee": 55000, "note": "화·목반 46,200" },
-        { "name": "초등생수영", "daysLabel": "월·수·금 / 화·목", "time": "16:00~19:50", "capacity": "레인별 15명", "fee": 33000, "note": "화·목반 22,000" },
-        { "name": "장애인수영(선수반)", "daysLabel": "화·목", "time": "", "capacity": "1레인 5명", "fee": 22000, "note": "초등 22,000 / 중·고등 46,200" }
-      ]
+        {
+          "name": "성인수영",
+          "daysLabel": "월·수·금 / 화·목",
+          "time": "06:00~10:50, 20:00~21:50",
+          "capacity": "레인별 15명",
+          "fee": 55000,
+          "note": "화·목반 46,200"
+        },
+        {
+          "name": "초등생수영",
+          "daysLabel": "월·수·금 / 화·목",
+          "time": "16:00~19:50",
+          "capacity": "레인별 15명",
+          "fee": 33000,
+          "note": "화·목반 22,000"
+        },
+        {
+          "name": "장애인수영(선수반)",
+          "daysLabel": "화·목",
+          "time": "",
+          "capacity": "1레인 5명",
+          "fee": 22000,
+          "note": "초등 22,000 / 중·고등 46,200"
+        }
+      ],
+      "sido": "경기도",
+      "sigungu": "하남시",
+      "fees": {
+        "full": {
+          "성인": 3300,
+          "청소년": 2750,
+          "경로": 2640,
+          "어린이": 2200,
+          "장애유공자": 1650
+        },
+        "half": {
+          "성인": 1650,
+          "청소년": 1380,
+          "경로": 1320,
+          "어린이": 1100,
+          "장애유공자": 830
+        }
+      },
+      "dataStatus": "full"
     },
     {
       "id": "hanam-deokpung",
@@ -106,26 +501,164 @@
       "updatedAt": "2026-06-01",
       "freeSwim": {
         "sessions": [
-          { "daysLabel": "평일", "dayCodes": [1,2,3,4,5], "start": "08:00", "end": "08:50", "capacity": 45, "tier": "half" },
-          { "daysLabel": "평일", "dayCodes": [1,2,3,4,5], "start": "21:00", "end": "21:50", "capacity": 45, "tier": "half" },
-          { "daysLabel": "토", "dayCodes": [6], "start": "16:00", "end": "17:50", "capacity": 75, "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [2,4], "start": "09:00", "end": "10:50", "capacity": 75, "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [2,4], "start": "11:00", "end": "12:50", "capacity": 75, "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [2,4], "start": "14:00", "end": "15:50", "capacity": 75, "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [2,4], "start": "16:00", "end": "17:50", "capacity": 75, "tier": "full" }
+          {
+            "daysLabel": "평일",
+            "dayCodes": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "start": "08:00",
+            "end": "08:50",
+            "capacity": 45,
+            "tier": "half"
+          },
+          {
+            "daysLabel": "평일",
+            "dayCodes": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "start": "21:00",
+            "end": "21:50",
+            "capacity": 45,
+            "tier": "half"
+          },
+          {
+            "daysLabel": "토",
+            "dayCodes": [
+              6
+            ],
+            "start": "16:00",
+            "end": "17:50",
+            "capacity": 75,
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              2,
+              4
+            ],
+            "start": "09:00",
+            "end": "10:50",
+            "capacity": 75,
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              2,
+              4
+            ],
+            "start": "11:00",
+            "end": "12:50",
+            "capacity": 75,
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              2,
+              4
+            ],
+            "start": "14:00",
+            "end": "15:50",
+            "capacity": 75,
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              2,
+              4
+            ],
+            "start": "16:00",
+            "end": "17:50",
+            "capacity": 75,
+            "tier": "full"
+          }
         ],
         "monthlyPass": {
-          "성인": 19800, "청소년": 16560, "어린이": 13200,
+          "성인": 19800,
+          "청소년": 16560,
+          "어린이": 13200,
           "note": "월·수·금 08:00 기준. 화·목 21:00 시간대는 성인 13,200 / 청소년 11,040 / 어린이 8,800"
         }
       },
       "lessons": [
-        { "name": "성인수영강습(가)", "daysLabel": "월·수·금", "time": "06:00~07:50", "capacity": "75명", "fee": 55000 },
-        { "name": "성인수영강습(나)", "daysLabel": "화·목", "time": "19:00~20:50", "capacity": "60~75명", "fee": 46200 },
-        { "name": "아쿠아로빅", "daysLabel": "월·수 / 화·목 / 금·토", "time": "09:00~15:50", "capacity": "60명", "fee": 46200 },
-        { "name": "초등생수영강습(가)", "daysLabel": "월·수·금", "time": "16:00~18:50", "capacity": "75명", "fee": 33000 },
-        { "name": "초등생수영강습(나)", "daysLabel": "화·목", "time": "16:00~18:50", "capacity": "75명", "fee": 22000 }
-      ]
+        {
+          "name": "성인수영강습(가)",
+          "daysLabel": "월·수·금",
+          "time": "06:00~07:50",
+          "capacity": "75명",
+          "fee": 55000
+        },
+        {
+          "name": "성인수영강습(나)",
+          "daysLabel": "화·목",
+          "time": "19:00~20:50",
+          "capacity": "60~75명",
+          "fee": 46200
+        },
+        {
+          "name": "아쿠아로빅",
+          "daysLabel": "월·수 / 화·목 / 금·토",
+          "time": "09:00~15:50",
+          "capacity": "60명",
+          "fee": 46200
+        },
+        {
+          "name": "초등생수영강습(가)",
+          "daysLabel": "월·수·금",
+          "time": "16:00~18:50",
+          "capacity": "75명",
+          "fee": 33000
+        },
+        {
+          "name": "초등생수영강습(나)",
+          "daysLabel": "화·목",
+          "time": "16:00~18:50",
+          "capacity": "75명",
+          "fee": 22000
+        }
+      ],
+      "sido": "경기도",
+      "sigungu": "하남시",
+      "fees": {
+        "full": {
+          "성인": 3300,
+          "청소년": 2750,
+          "경로": 2640,
+          "어린이": 2200,
+          "장애유공자": 1650
+        },
+        "half": {
+          "성인": 1650,
+          "청소년": 1380,
+          "경로": 1320,
+          "어린이": 1100,
+          "장애유공자": 830
+        }
+      },
+      "dataStatus": "full"
     },
     {
       "id": "hanam-gamil",
@@ -142,19 +675,129 @@
       "updatedAt": "2026-06-01",
       "freeSwim": {
         "sessions": [
-          { "daysLabel": "토", "dayCodes": [6], "start": "09:00", "end": "10:50", "capacity": 60, "tier": "full" },
-          { "daysLabel": "토", "dayCodes": [6], "start": "16:00", "end": "17:50", "capacity": 60, "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [2,4], "start": "09:00", "end": "10:50", "capacity": 60, "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [2,4], "start": "11:00", "end": "12:50", "capacity": 60, "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [2,4], "start": "14:00", "end": "15:50", "capacity": 60, "tier": "full" },
-          { "daysLabel": "일", "dayCodes": [0], "weeksOfMonth": [2,4], "start": "16:00", "end": "17:50", "capacity": 60, "tier": "full" }
+          {
+            "daysLabel": "토",
+            "dayCodes": [
+              6
+            ],
+            "start": "09:00",
+            "end": "10:50",
+            "capacity": 60,
+            "tier": "full"
+          },
+          {
+            "daysLabel": "토",
+            "dayCodes": [
+              6
+            ],
+            "start": "16:00",
+            "end": "17:50",
+            "capacity": 60,
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              2,
+              4
+            ],
+            "start": "09:00",
+            "end": "10:50",
+            "capacity": 60,
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              2,
+              4
+            ],
+            "start": "11:00",
+            "end": "12:50",
+            "capacity": 60,
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              2,
+              4
+            ],
+            "start": "14:00",
+            "end": "15:50",
+            "capacity": 60,
+            "tier": "full"
+          },
+          {
+            "daysLabel": "일",
+            "dayCodes": [
+              0
+            ],
+            "weeksOfMonth": [
+              2,
+              4
+            ],
+            "start": "16:00",
+            "end": "17:50",
+            "capacity": 60,
+            "tier": "full"
+          }
         ]
       },
       "lessons": [
-        { "name": "성인수영", "daysLabel": "월·수·금 / 화·목", "time": "06:00~10:50, 19:00~21:50", "capacity": "레인별 12명", "fee": 55000, "note": "화·목반 46,200" },
-        { "name": "초등생수영", "daysLabel": "월·수·금 / 화·목", "time": "16:00~19:50", "capacity": "레인별 15명", "fee": 33000, "note": "화·목반 22,000" },
-        { "name": "장애인수영", "daysLabel": "월·수·금 / 화·목", "time": "", "capacity": "7명", "fee": 33000, "note": "대상·요일별 33,000~55,000" }
-      ]
+        {
+          "name": "성인수영",
+          "daysLabel": "월·수·금 / 화·목",
+          "time": "06:00~10:50, 19:00~21:50",
+          "capacity": "레인별 12명",
+          "fee": 55000,
+          "note": "화·목반 46,200"
+        },
+        {
+          "name": "초등생수영",
+          "daysLabel": "월·수·금 / 화·목",
+          "time": "16:00~19:50",
+          "capacity": "레인별 15명",
+          "fee": 33000,
+          "note": "화·목반 22,000"
+        },
+        {
+          "name": "장애인수영",
+          "daysLabel": "월·수·금 / 화·목",
+          "time": "",
+          "capacity": "7명",
+          "fee": 33000,
+          "note": "대상·요일별 33,000~55,000"
+        }
+      ],
+      "sido": "경기도",
+      "sigungu": "하남시",
+      "fees": {
+        "full": {
+          "성인": 3300,
+          "청소년": 2750,
+          "경로": 2640,
+          "어린이": 2200,
+          "장애유공자": 1650
+        },
+        "half": {
+          "성인": 1650,
+          "청소년": 1380,
+          "경로": 1320,
+          "어린이": 1100,
+          "장애유공자": 830
+        }
+      },
+      "dataStatus": "full"
     }
   ]
 }

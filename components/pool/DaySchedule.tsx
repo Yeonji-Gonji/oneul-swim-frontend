@@ -40,7 +40,7 @@ export function DaySchedule({ pool }: { pool: Pool }) {
   const ongoing = status.kind === 'open' ? status.session : null;
   const isToday = sel === (now.day() as DayCode);
 
-  const slots = pool.freeSwim.sessions
+  const slots = (pool.freeSwim?.sessions ?? [])
     .filter((s) => s.dayCodes.includes(sel))
     .sort((a, b) => toMin(a.start) - toMin(b.start));
 

@@ -13,19 +13,27 @@ import type {
   Pool,
   PoolsData,
   PriceByTarget,
+  PriceTiers,
 } from './types';
 
 const data = rawData as unknown as PoolsData;
 
 export const pools: Pool[] = data.pools;
-export const priceTiers = data.freeSwimPriceTiers;
 
 export const getPoolById = (id: string): Pool | undefined =>
   pools.find((p) => p.id === id);
 
-/** 세션의 tier를 실제 대상별 요금표로 변환 */
-export const resolveSessionPrice = (session: FreeSwimSession): PriceByTarget =>
-  priceTiers[session.tier];
+/** 리스팅 전용(자유수영 정보 없음) 시설인가 */
+export const isListing = (pool: Pool): boolean =>
+  pool.dataStatus === 'listing' ||
+  !pool.freeSwim ||
+  pool.freeSwim.sessions.length === 0;
+
+/** 세션의 tier를 시설별 요금표로 변환. 요금 데이터 없으면 undefined */
+export const resolveSessionPrice = (
+  fees: PriceTiers | null | undefined,
+  session: FreeSwimSession,
+): Partial<PriceByTarget> | undefined => fees?.[session.tier];
 
 /** "HH:mm" → 분 단위 정수 */
 const toMinutes = (hhmm: string): number => {
@@ -61,12 +69,15 @@ export type NowStatus =
       minsUntil: number;
     } // 🟡 곧 시작
   | { kind: 'closed-today' } // ⚪ 오늘 세션 종료
-  | { kind: 'none-today' }; // ⚪ 오늘 자유수영 운영 없음
+  | { kind: 'none-today' } // ⚪ 오늘 자유수영 운영 없음
+  | { kind: 'listing' }; // ⚪ 자유수영 정보 준비중(기본정보만)
 
 const SOON_THRESHOLD_MIN = 90;
 
 /** 현재 시각(Asia/Seoul dayjs) 기준 시설의 자유수영 상태. */
 export const getPoolNowStatus = (pool: Pool, now: Dayjs): NowStatus => {
+  // 리스팅 전용 시설은 시간표가 없음 → 정보 준비중
+  if (!pool.freeSwim) return { kind: 'listing' };
   const todays = pool.freeSwim.sessions
     .filter((s) => isSessionToday(s, now))
     .sort((a, b) => toMinutes(a.start) - toMinutes(b.start));
@@ -108,6 +119,8 @@ const statusSortKey = (s: NowStatus): [number, number] => {
       return [2, 0];
     case 'none-today':
       return [3, 0];
+    case 'listing':
+      return [4, 0]; // 정보 준비중은 맨 뒤
   }
 };
 

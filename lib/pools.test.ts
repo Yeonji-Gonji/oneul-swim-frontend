@@ -14,9 +14,15 @@ import {
   sortPoolsByStatus,
 } from './pools';
 import { dayjs } from './time';
-import type { FreeSwimSession, Pool } from './types';
+import type { FreeSwimSession, Pool, PriceTiers } from './types';
 
 const SEOUL = 'Asia/Seoul';
+
+/** 요금표 픽스처 (하남 공통 요금) */
+const FEES: PriceTiers = {
+  full: { 성인: 3300, 청소년: 2750, 경로: 2640, 어린이: 2200, 장애유공자: 1650 },
+  half: { 성인: 1650, 청소년: 1380, 경로: 1320, 어린이: 1100, 장애유공자: 830 },
+};
 
 /** 지정한 벽시계 시각(Asia/Seoul)의 Dayjs 생성 */
 const at = (isoLocal: string) => dayjs.tz(isoLocal, SEOUL);
@@ -177,15 +183,19 @@ describe('freshnessLabel', () => {
 
 describe('resolveSessionPrice', () => {
   it('full tier → 전액 요금표', () => {
-    const price = resolveSessionPrice(session({ tier: 'full' }));
-    expect(price.성인).toBe(3300);
-    expect(price.어린이).toBe(2200);
+    const price = resolveSessionPrice(FEES, session({ tier: 'full' }));
+    expect(price?.성인).toBe(3300);
+    expect(price?.어린이).toBe(2200);
   });
 
   it('half tier → 반액 요금표', () => {
-    const price = resolveSessionPrice(session({ tier: 'half' }));
-    expect(price.성인).toBe(1650);
-    expect(price.어린이).toBe(1100);
+    const price = resolveSessionPrice(FEES, session({ tier: 'half' }));
+    expect(price?.성인).toBe(1650);
+    expect(price?.어린이).toBe(1100);
+  });
+
+  it('요금 데이터가 없으면 undefined', () => {
+    expect(resolveSessionPrice(null, session({ tier: 'full' }))).toBeUndefined();
   });
 });
 

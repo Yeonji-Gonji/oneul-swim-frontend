@@ -9,18 +9,21 @@
  * 순수 함수(getPoolNowStatus 등)는 lib/pools.ts에 그대로 두고, 여기서는 "데이터 소스"만 담당한다.
  */
 import rawData from '../data/pools.json';
-import type { FreeSwimTier, Pool, PoolsData, PriceByTarget } from './types';
+import type { Pool, PoolsData } from './types';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
 /** 정적 폴백 (빌드타임 번들). API 미설정/실패 시 항상 이 값을 반환한다. */
 const FALLBACK = rawData as unknown as PoolsData;
 
-/** GET /pools 응답이 data/pools.json과 동일한 shape인지 최소 검증 */
+/**
+ * GET /pools 응답이 쓸 수 있는 shape인지 최소 검증.
+ * 전국 확장 이후 요금은 pool.fees 로 이동 → pools 배열만 있으면 유효.
+ */
 function isValidPoolsData(data: unknown): data is PoolsData {
   if (!data || typeof data !== 'object') return false;
   const d = data as Partial<PoolsData>;
-  return Array.isArray(d.pools) && Boolean(d.freeSwimPriceTiers);
+  return Array.isArray(d.pools);
 }
 
 /**
@@ -43,13 +46,6 @@ export async function getPoolsData(): Promise<PoolsData> {
 /** 시설 목록 (API 우선 → 폴백) */
 export async function getPoolsList(): Promise<Pool[]> {
   return (await getPoolsData()).pools;
-}
-
-/** 자유수영 공통 요금표 (API 우선 → 폴백) */
-export async function getPriceTiers(): Promise<
-  Record<FreeSwimTier, PriceByTarget>
-> {
-  return (await getPoolsData()).freeSwimPriceTiers;
 }
 
 /** id로 시설 1건 조회 (API 우선 → 폴백). 없으면 undefined */

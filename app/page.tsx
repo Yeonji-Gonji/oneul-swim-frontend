@@ -8,14 +8,14 @@ import { getPoolsData } from '@/lib/pools-data';
 export const dynamic = 'force-dynamic';
 
 export default async function HomePage() {
-  const { pools, freeSwimPriceTiers } = await getPoolsData();
+  const { pools } = await getPoolsData();
 
   return (
     <>
       <main className="mx-auto w-full max-w-md px-6 pb-24 pt-12">
         <Header variant="location" right={<ViewToggle active="list" />} />
         <div className="mt-4">
-          <HomeClient pools={pools} priceTiers={freeSwimPriceTiers} />
+          <HomeClient pools={pools} />
         </div>
       </main>
       <TabBar active="home" />

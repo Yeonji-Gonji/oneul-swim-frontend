@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { getPoolNowStatus, sortPoolsByStatus, type NowStatus } from '@/lib/pools';
-import type { FreeSwimTier, Pool, PriceByTarget } from '@/lib/types';
+import type { Pool } from '@/lib/types';
 import { nowInSeoul, type Dayjs } from '@/lib/time';
 import { Button } from '@/components/ui/Button';
 import { IconMoon } from '@/components/ui/icons';
@@ -10,18 +10,14 @@ import { FilterChips, type PoolFilter } from './FilterChips';
 import { PoolCard } from './PoolCard';
 
 /**
- * 홈 인터랙티브 영역 — 필터 칩 + 요약 + 시설 리스트.
- * 데이터(pools/priceTiers)는 서버 컴포넌트가 API 우선 로더로 읽어 주입한다(폴백 시 정적).
+ * 홈 인터랙티브 영역 — 지역(시도) 필터 + 상태 필터 칩 + 요약 + 시설 리스트.
+ * 데이터(pools)는 서버 컴포넌트가 API 우선 로더로 읽어 주입한다(폴백 시 정적).
+ * 요금은 각 pool.fees 에 실려 오므로 별도 주입이 필요 없다.
  * "지금 상태"는 클라이언트에서 사용자 시계(Asia/Seoul) 기준 계산, 1분마다 갱신.
  */
-export function HomeClient({
-  pools,
-  priceTiers,
-}: {
-  pools: Pool[];
-  priceTiers: Record<FreeSwimTier, PriceByTarget>;
-}) {
+export function HomeClient({ pools }: { pools: Pool[] }) {
   const [filter, setFilter] = useState<PoolFilter>('now');
+  const [sido, setSido] = useState<string>('all');
   const [now, setNow] = useState<Dayjs>(() => nowInSeoul());
 
   useEffect(() => {
@@ -29,8 +25,20 @@ export function HomeClient({
     return () => clearInterval(id);
   }, []);
 
+  // 데이터에 존재하는 시도 목록 (전국 확장 시 필터로 노출)
+  const sidoOptions = useMemo(() => {
+    const set = new Set<string>();
+    for (const p of pools) if (p.sido) set.add(p.sido);
+    return [...set].sort();
+  }, [pools]);
+
+  const scoped = useMemo(
+    () => (sido === 'all' ? pools : pools.filter((p) => p.sido === sido)),
+    [pools, sido],
+  );
+
   const { visible, openCount, soonCount } = useMemo(() => {
-    const withStatus = pools.map((pool) => ({
+    const withStatus = scoped.map((pool) => ({
       pool,
       status: getPoolNowStatus(pool, now),
     }));
@@ -40,7 +48,8 @@ export function HomeClient({
     const matches = (kind: NowStatus['kind']): boolean => {
       if (filter === 'all') return true;
       if (filter === 'now') return kind === 'open';
-      return kind !== 'none-today'; // '오늘' = 오늘 운영일
+      // '오늘' = 오늘 운영일 (리스팅/미운영 제외)
+      return kind !== 'none-today' && kind !== 'listing';
     };
 
     const filtered = withStatus
@@ -51,13 +60,29 @@ export function HomeClient({
       openCount: count('open'),
       soonCount: count('soon'),
     };
-  }, [filter, now, pools]);
+  }, [filter, now, scoped]);
 
   // '지금 가능' 필터인데 지금 열린 곳이 없을 때 — 리치 empty (Figma Home/지금0곳)
   const emptyNow = filter === 'now' && openCount === 0;
 
   return (
     <div className="flex flex-col gap-4">
+      {sidoOptions.length > 1 && (
+        <select
+          value={sido}
+          onChange={(e) => setSido(e.target.value)}
+          className="w-fit rounded-full border border-line bg-surface px-3 py-1.5 text-sm text-text"
+          aria-label="지역(시도) 선택"
+        >
+          <option value="all">전국</option>
+          {sidoOptions.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
+        </select>
+      )}
+
       <FilterChips value={filter} onChange={setFilter} />
 
       {emptyNow ? (
@@ -90,12 +115,7 @@ export function HomeClient({
           {visible.length > 0 ? (
             <div className="flex flex-col gap-3">
               {visible.map((pool) => (
-                <PoolCard
-                  key={pool.id}
-                  pool={pool}
-                  now={now}
-                  priceTiers={priceTiers}
-                />
+                <PoolCard key={pool.id} pool={pool} now={now} />
               ))}
             </div>
           ) : (

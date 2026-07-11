@@ -59,13 +59,23 @@ export interface MonthlyPass {
   note?: string;
 }
 
+/** 요금표: 전액(full)/반액(half) 대상별 금액. 시설마다 대상 구성이 달라 Partial */
+export type PriceTiers = Record<FreeSwimTier, Partial<PriceByTarget>>;
+
+/** 데이터 완비 수준: listing=기본정보만, full=자유수영·요금까지 */
+export type DataStatus = 'listing' | 'full';
+
 export interface Pool {
   id: string;
   name: string;
-  region: '미사' | '풍산' | '덕풍' | '감일';
+  /** 광역(시도)/기초(시군구) — 전국 필터 기준. 벌크 임포트 시 채움 */
+  sido?: string | null;
+  sigungu?: string | null;
+  /** 표시용 세부 지역 라벨(예: "미사"). 필수 아님 */
+  region?: string | null;
   operator: string;
   phone: string;
-  /** 주소·위경도는 공공데이터 API/네이버로 보강 예정 → 초기 null */
+  /** 주소·위경도 */
   address: string | null;
   lat: number | null;
   lng: number | null;
@@ -76,15 +86,23 @@ export interface Pool {
   sourceUrl: string;
   /** ISO date — "N일 전 업데이트" 계산용 (신뢰 장치) */
   updatedAt: string;
+  /** 자유수영 정보. 리스팅 전용(기본정보만) 시설은 null */
   freeSwim: {
     sessions: FreeSwimSession[];
     monthlyPass?: MonthlyPass;
-  };
-  lessons: LessonProgram[];
+  } | null;
+  lessons: LessonProgram[] | null;
+  /** 시설별 자유수영 요금표. 데이터 없으면 null */
+  fees?: PriceTiers | null;
+  /** "listing" | "full". 미지정 시 데이터 유무로 추정 */
+  dataStatus?: DataStatus;
 }
 
 export interface PoolsData {
-  /** 자유수영 요금표 — 전 시설 공통 (공통 테이블) */
-  freeSwimPriceTiers: Record<FreeSwimTier, PriceByTarget>;
+  /**
+   * @deprecated 요금은 pool.fees 로 이동. 백엔드가 이행기 동안 대표 요금표를
+   * top-level 에도 함께 실어 주므로 optional 로만 남긴다(Phase 3 이후 제거).
+   */
+  freeSwimPriceTiers?: Record<FreeSwimTier, PriceByTarget>;
   pools: Pool[];
 }

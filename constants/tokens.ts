@@ -73,6 +73,7 @@ export const statusToToken = (
       return 'upcoming';
     case 'closed-today':
     case 'none-today':
+    case 'listing':
       return 'closed';
   }
 };

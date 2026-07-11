@@ -43,6 +43,13 @@ function describe(status: NowStatus): View {
         dot: 'bg-closed',
         ink: 'text-closed-ink',
       };
+    case 'listing':
+      return {
+        label: '자유수영 정보 준비중',
+        pill: 'bg-closed-soft',
+        dot: 'bg-closed',
+        ink: 'text-closed-ink',
+      };
   }
 }
 
