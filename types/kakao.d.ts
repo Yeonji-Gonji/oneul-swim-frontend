@@ -30,6 +30,8 @@ declare global {
 
     class Point {
       constructor(x: number, y: number);
+      x: number;
+      y: number;
     }
 
     interface MapOptions {
@@ -37,14 +39,28 @@ declare global {
       level: number;
     }
 
+    interface SetLevelOptions {
+      /** 줌 전후 화면 위치를 고정할 좌표 */
+      anchor?: LatLng;
+      animate?: boolean | { duration: number };
+    }
+
+    /** 지도 좌표계 ↔ 컨테이너 픽셀 좌표 변환 */
+    class MapProjection {
+      containerPointFromCoords(latlng: LatLng): Point;
+      coordsFromContainerPoint(point: Point): LatLng;
+    }
+
     class Map {
       constructor(container: HTMLElement, options: MapOptions);
       setBounds(bounds: LatLngBounds): void;
       setCenter(latlng: LatLng): void;
       panTo(latlng: LatLng): void;
-      setLevel(level: number): void;
+      setLevel(level: number, options?: SetLevelOptions): void;
       getLevel(): number;
       getCenter(): LatLng;
+      setMaxLevel(maxLevel: number): void;
+      getProjection(): MapProjection;
     }
 
     interface MarkerImageOptions {
@@ -71,9 +87,12 @@ declare global {
 
     interface CustomOverlayOptions {
       position: LatLng;
+      xAnchor?: number;
       yAnchor?: number;
       zIndex?: number;
       content: HTMLElement | string;
+      /** true면 오버레이 내부 클릭이 지도 click 이벤트로 전파되지 않음 */
+      clickable?: boolean;
     }
 
     class CustomOverlay {

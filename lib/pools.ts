@@ -9,6 +9,7 @@
 import rawData from '../data/pools.json';
 import { dayjs, type Dayjs } from './time';
 import type {
+  DayCode,
   FreeSwimSession,
   Pool,
   PoolsData,
@@ -71,6 +72,32 @@ export const sessionsOnWeekday = (
   dayCode: FreeSwimSession['dayCodes'][number],
 ): FreeSwimSession[] =>
   (pool.freeSwim?.sessions ?? []).filter((s) => s.dayCodes.includes(dayCode));
+
+/**
+ * 플로팅박스용 운영시간 요약 — 기준일은 요일 필터를 따른다.
+ * 세션 0개 또는 자유수영 정보 부재(listing) → null (상태 라벨이 사실을 전달하므로 시간 줄 생략).
+ * 세션 1~2개 → "HH:mm~HH:mm" 콤마 연결, 3개 이상 → 앞 2개 + " 외 N회".
+ */
+export const freeSwimTimeSummary = (
+  pool: Pool,
+  day: DayCode | 'today',
+  now: Dayjs,
+): string | null => {
+  if (!pool.freeSwim || pool.freeSwim.sessions.length === 0) return null;
+  const sessions =
+    day === 'today'
+      ? pool.freeSwim.sessions.filter((s) => isSessionToday(s, now))
+      : sessionsOnWeekday(pool, day);
+  if (sessions.length === 0) return null;
+  const sorted = [...sessions].sort(
+    (a, b) => toMinutes(a.start) - toMinutes(b.start),
+  );
+  const head = sorted
+    .slice(0, 2)
+    .map((s) => `${s.start}~${s.end}`)
+    .join(', ');
+  return sorted.length > 2 ? `${head} 외 ${sorted.length - 2}회` : head;
+};
 
 export type NowStatus =
   | { kind: 'open'; session: FreeSwimSession; endsAt: string } // 🟢 진행 중

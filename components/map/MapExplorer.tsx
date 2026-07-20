@@ -1,16 +1,26 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import Link from 'next/link';
-import type { DayCode, Pool } from '@/lib/types';
+import type { Pool } from '@/lib/types';
 import { getPoolNowStatus, sessionsOnWeekday } from '@/lib/pools';
 import { nowInSeoul, type Dayjs } from '@/lib/time';
 import { distanceKm, formatDistance } from '@/lib/geo';
 import { formatWon, tierLabel } from '@/lib/format';
-import { StatusBadge } from '@/components/ui/StatusBadge';
-import { MapSheet } from '@/components/map/MapSheet';
+import {
+  MapSheet,
+  PEEK_ABOVE_TABBAR,
+  type MapSheetHandle,
+} from '@/components/map/MapSheet';
+import {
+  DAY_OPTIONS,
+  DayStatus,
+  type DayFilter,
+} from '@/components/map/DayStatus';
+import { PoolFloatingBox } from '@/components/map/PoolFloatingBox';
 import { cn } from '@/lib/cn';
-import { IconNavigation, IconChevronRight } from '@/components/ui/icons';
+import { IconNavigation } from '@/components/ui/icons';
 
 const KEY = process.env.NEXT_PUBLIC_KAKAO_MAP_KEY;
 
@@ -21,18 +31,6 @@ const STATUS_HEX: Record<MarkerKind, string> = {
   soon: '#F0A231',
   gray: '#9797A0',
 };
-
-type DayFilter = 'today' | DayCode;
-const DAY_OPTIONS: { v: DayFilter; label: string }[] = [
-  { v: 'today', label: '오늘' },
-  { v: 1, label: '월' },
-  { v: 2, label: '화' },
-  { v: 3, label: '수' },
-  { v: 4, label: '목' },
-  { v: 5, label: '금' },
-  { v: 6, label: '토' },
-  { v: 0, label: '일' },
-];
 
 const STATUS_OPTIONS: {
   v: 'all' | 'open' | 'notopen';
@@ -96,59 +94,6 @@ function pinSrc(hex: string): string {
   return src;
 }
 
-/** 리스트/미니카드 상태 표시 — 오늘은 실시간 뱃지, 다른 요일은 그날 운영 요약 */
-function DayStatus({
-  pool,
-  day,
-  now,
-}: {
-  pool: Pool;
-  day: DayFilter;
-  now: Dayjs;
-}) {
-  if (day === 'today') {
-    return <StatusBadge status={getPoolNowStatus(pool, now)} />;
-  }
-  const listing = !pool.freeSwim || pool.freeSwim.sessions.length === 0;
-  const ss = listing ? [] : sessionsOnWeekday(pool, day);
-  const label = DAY_OPTIONS.find((d) => d.v === day)?.label ?? '';
-  let text: string;
-  let tone: 'open' | 'gray';
-  if (listing) {
-    text = '자유수영 정보 준비중';
-    tone = 'gray';
-  } else if (ss.length > 0) {
-    const times = ss
-      .slice(0, 2)
-      .map((s) => `${s.start}~${s.end}`)
-      .join(', ');
-    text = `${label} ${times}`;
-    tone = 'open';
-  } else {
-    text = `${label}요일 자유수영 없음`;
-    tone = 'gray';
-  }
-  return (
-    <span
-      className={cn(
-        'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold',
-        tone === 'open'
-          ? 'bg-now-open-soft text-now-open-ink'
-          : 'bg-closed-soft text-closed-ink',
-      )}
-    >
-      <span
-        className={cn(
-          'size-2 rounded-full',
-          tone === 'open' ? 'bg-now-open' : 'bg-closed',
-        )}
-        aria-hidden
-      />
-      {text}
-    </span>
-  );
-}
-
 /**
  * 맵-퍼스트 홈 (Apple 지도 최신 UI 레퍼런스).
  * 내 위치 기반 지도 + 플로팅 글라스 지역/날짜 필터 + 드래그 바텀시트 리스트(보조).
@@ -177,6 +122,10 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
   const markersRef = useRef<kakao.maps.Marker[]>([]);
   const userOverlayRef = useRef<kakao.maps.CustomOverlay | null>(null);
   const scopeKeyRef = useRef<string>('');
+  const mapSheetRef = useRef<MapSheetHandle>(null);
+  // 플로팅박스: 좌표 결속 CustomOverlay + 포털 컨테이너(FR-1)
+  const floatOverlayRef = useRef<kakao.maps.CustomOverlay | null>(null);
+  const [floatBoxEl, setFloatBoxEl] = useState<HTMLDivElement | null>(null);
 
   const showMap = !!KEY && !failed;
 
@@ -236,9 +185,14 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
   }, [filteredPools, userLoc, day, now]);
 
   const visibleList = listed.slice(0, LIST_CAP);
+  // 필터 결과 기준 조회(FR-6, SD-4) — 대상이 필터에서 빠지면 null → 박스 미렌더
   const selectedPool = selectedId
-    ? scoped.find((p) => p.id === selectedId) ?? null
+    ? filteredPools.find((p) => p.id === selectedId) ?? null
     : null;
+  // 필터 변경으로 선택 대상이 결과에서 빠지면 상태도 해제(SD-4) — 렌더 중 보정 패턴
+  if (selectedId !== null && selectedPool === null) {
+    setSelectedId(null);
+  }
 
   const handleSido = (v: string) => {
     setSido(v);
@@ -278,13 +232,17 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
       }
       kakao.maps.load(() => {
         if (!mapEl.current || mapRef.current) return;
-        mapRef.current = new kakao.maps.Map(mapEl.current, {
+        const map = new kakao.maps.Map(mapEl.current, {
           center: new kakao.maps.LatLng(
             DEFAULT_CENTER.lat,
             DEFAULT_CENTER.lng,
           ),
           level: DEFAULT_CENTER.level,
         });
+        map.setMaxLevel(13); // 줌아웃 상한 = 전국 초기 뷰(FR-7, SD-2)
+        // 빈 지도 탭 → 플로팅박스 닫기(FR-3). 마커/clickable 오버레이 탭은 전파되지 않음
+        kakao.maps.event.addListener(map, 'click', () => setSelectedId(null));
+        mapRef.current = map;
         setMapReady(true);
       });
     };
@@ -300,6 +258,33 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
     s.onload = init;
     s.onerror = () => setFailed(true);
     document.head.appendChild(s);
+  }, []);
+
+  /**
+   * 마커가 가시 영역(필터 스택 하단 ~ peek 시트 상단)의 위에서 60% 지점에 오도록
+   * 보정한 중심으로 panTo(FR-2, REQ-NF-002) — 위쪽 40%는 플로팅박스 전개 공간.
+   * 레벨 변화 없는 이동이므로 projection으로 픽셀↔좌표 환산.
+   */
+  const panToReveal = useCallback((pos: kakao.maps.LatLng) => {
+    const kakao = window.kakao;
+    const map = mapRef.current;
+    const el = mapEl.current;
+    if (!kakao?.maps || !map || !el) return;
+    const viewH = el.clientHeight;
+    const visTop =
+      document.getElementById('map-filter-stack')?.getBoundingClientRect()
+        .bottom ?? 0;
+    const tabbarH =
+      document.querySelector('nav')?.getBoundingClientRect().height ?? 58;
+    const visBottom = viewH - tabbarH - PEEK_ABOVE_TABBAR;
+    const targetY = visTop + (visBottom - visTop) * 0.6;
+    const proj = map.getProjection();
+    const markerPt = proj.containerPointFromCoords(pos);
+    // 화면 중심이 (markerPt.x, markerPt.y + h/2 − targetY)에 오면 마커가 targetY에 놓인다
+    const center = proj.coordsFromContainerPoint(
+      new kakao.maps.Point(markerPt.x, markerPt.y + viewH / 2 - targetY),
+    );
+    map.panTo(center);
   }, []);
 
   // 마커 (재)빌드 — 스코프/요일 변경 시
@@ -328,7 +313,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
       const marker = new kakao.maps.Marker({ position: pos, image });
       kakao.maps.event.addListener(marker, 'click', () => {
         setSelectedId(p.id);
-        map.panTo(pos);
+        panToReveal(pos);
       });
       markers.push(marker);
     });
@@ -355,7 +340,55 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
       if (!(userLoc && sido === 'all')) map.setBounds(bounds);
       scopeKeyRef.current = scopeKey;
     }
-  }, [mapReady, filteredPools, day, now, sido, sigungu, userLoc]);
+  }, [mapReady, filteredPools, day, now, sido, sigungu, userLoc, panToReveal]);
+
+  // 플로팅박스 오버레이 관리(FR-1) — selectedPool 파생. 좌표 결속이라 마커 재생성과 무관(E-6)
+  useEffect(() => {
+    const kakao = window.kakao;
+    if (!mapReady || !kakao?.maps || !mapRef.current) return;
+    if (!selectedPool || selectedPool.lat == null || selectedPool.lng == null) {
+      floatOverlayRef.current?.setMap(null);
+      return;
+    }
+    const pos = new kakao.maps.LatLng(selectedPool.lat, selectedPool.lng);
+    let overlay = floatOverlayRef.current;
+    if (!overlay) {
+      const el = document.createElement('div');
+      // 하단 중앙 앵커(yAnchor:1 상당)를 CSS로 처리 — kakao의 anchor 오프셋은
+      // 콘텐츠 크기 측정 기반이라 포털 렌더 전(빈 div) 생성 시 0으로 굳는다
+      el.style.transform = 'translate(-50%, -100%)';
+      overlay = new kakao.maps.CustomOverlay({
+        position: pos,
+        content: el,
+        xAnchor: 0,
+        yAnchor: 0,
+        zIndex: 10, // 내 위치 오버레이(5)보다 위
+        clickable: true, // 박스 내부 탭이 map click(빈 영역 닫기)으로 전파되지 않음
+      });
+      floatOverlayRef.current = overlay;
+      setFloatBoxEl(el);
+    } else {
+      overlay.setPosition(pos);
+    }
+    overlay.setMap(mapRef.current);
+  }, [mapReady, selectedPool]);
+
+  /** 리스트 아이템 탭 → 시트 축소 → 줌 보정 → 중심 보정 → 박스 활성(FR-4) */
+  const handleListTap = useCallback(
+    (pool: Pool) => {
+      mapSheetRef.current?.snapTo('peek');
+      const kakao = window.kakao;
+      const map = mapRef.current;
+      if (kakao?.maps && map && pool.lat != null && pool.lng != null) {
+        const pos = new kakao.maps.LatLng(pool.lat, pool.lng);
+        // 클러스터러 minLevel(6) 아래로 줌인해 개별 마커 노출 보장(SD-3)
+        if (map.getLevel() > 5) map.setLevel(5, { anchor: pos });
+        panToReveal(pos);
+      }
+      setSelectedId(pool.id);
+    },
+    [panToReveal],
+  );
 
   // 내 위치 오버레이 + 센터링
   useEffect(() => {
@@ -532,55 +565,22 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
         </button>
       </div>
 
-      {/* 선택 미니카드 (마커 클릭) */}
-      {selectedPool && (
-        <div
-          className="animate-fade-in absolute inset-x-3 z-40"
-          style={{ bottom: 'calc(var(--tabbar-h) + 12px)' }}
-        >
-          <div className="glass-panel relative flex flex-col gap-2 rounded-input p-4 shadow-card">
-            <button
-              type="button"
-              onClick={() => setSelectedId(null)}
-              aria-label="닫기"
-              className="absolute top-3 right-3 flex size-6 items-center justify-center rounded-full bg-fill-secondary text-text-sub"
-            >
-              ✕
-            </button>
-            <Link href={`/pool/${selectedPool.id}`} className="flex flex-col gap-2">
-              <div className="flex items-center gap-2 pr-6">
-                <span className="text-body font-bold text-text">
-                  {selectedPool.name}
-                </span>
-                <span className="shrink-0 text-sm text-text-sub">
-                  {userLoc
-                    ? (formatDistance(
-                        distanceKm(
-                          userLoc.lat,
-                          userLoc.lng,
-                          selectedPool.lat,
-                          selectedPool.lng,
-                        ),
-                      ) ?? areaLabel(selectedPool))
-                    : areaLabel(selectedPool)}
-                </span>
-              </div>
-              <DayStatus pool={selectedPool} day={day} now={now} />
-              {priceSummary(selectedPool) && (
-                <span className="text-sm text-text">
-                  {priceSummary(selectedPool)}
-                </span>
-              )}
-              <span className="flex items-center gap-0.5 text-sm font-bold text-primary">
-                상세 보기 <IconChevronRight className="size-4" />
-              </span>
-            </Link>
-          </div>
-        </div>
-      )}
+      {/* 마커 위 플로팅박스 — CustomOverlay 컨테이너에 포털 렌더(FR-1) */}
+      {floatBoxEl &&
+        selectedPool &&
+        createPortal(
+          <PoolFloatingBox
+            pool={selectedPool}
+            day={day}
+            now={now}
+            onClose={() => setSelectedId(null)}
+          />,
+          floatBoxEl,
+        )}
 
       {/* 바텀시트 리스트 (보조) */}
       <MapSheet
+        ref={mapSheetRef}
         header={
           <div className="flex items-baseline justify-between">
             <span className="text-body font-bold text-text">
@@ -596,18 +596,19 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
       >
         {visibleList.length > 0 ? (
           <ul className="flex flex-col gap-2.5">
-            {visibleList.map(({ pool, dist }) => (
-              <li key={pool.id}>
-                <Link
-                  href={`/pool/${pool.id}`}
-                  onClick={() => setSelectedId(pool.id)}
-                  className={cn(
-                    'flex flex-col gap-2 rounded-input bg-surface p-3.5 transition active:scale-[0.99]',
-                    selectedId === pool.id
-                      ? 'ring-2 ring-primary'
-                      : 'ring-1 ring-line',
-                  )}
-                >
+            {visibleList.map(({ pool, dist }) => {
+              // 지도 모드 + 좌표 보유 → 지도 연동 버튼(REQ-010).
+              // 좌표 없음(마커 미생성)·폴백 모드는 기존 상세 직행 Link 유지(E-1, E-9)
+              const mapLinkable =
+                showMap && pool.lat != null && pool.lng != null;
+              const itemClass = cn(
+                'flex w-full flex-col gap-2 rounded-input bg-surface p-3.5 text-left transition active:scale-[0.99]',
+                selectedId === pool.id
+                  ? 'ring-2 ring-primary'
+                  : 'ring-1 ring-line',
+              );
+              const content = (
+                <>
                   <div className="flex items-center justify-between gap-2">
                     <span className="truncate text-body font-bold text-text">
                       {pool.name}
@@ -622,9 +623,26 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
                       {priceSummary(pool)}
                     </span>
                   )}
-                </Link>
-              </li>
-            ))}
+                </>
+              );
+              return (
+                <li key={pool.id}>
+                  {mapLinkable ? (
+                    <button
+                      type="button"
+                      onClick={() => handleListTap(pool)}
+                      className={itemClass}
+                    >
+                      {content}
+                    </button>
+                  ) : (
+                    <Link href={`/pool/${pool.id}`} className={itemClass}>
+                      {content}
+                    </Link>
+                  )}
+                </li>
+              );
+            })}
             {listed.length > LIST_CAP && (
               <li className="py-3 text-center text-sm text-text-sub">
                 가까운 {LIST_CAP}곳만 표시 중 · 지역을 좁히면 더 정확해요

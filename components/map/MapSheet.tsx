@@ -1,26 +1,37 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import type { PointerEvent, ReactNode } from 'react';
 
-type Detent = 'peek' | 'half' | 'full';
+export type Detent = 'peek' | 'half' | 'full';
 
-const PEEK_ABOVE_TABBAR = 172; // peek 시 탭바 위로 보일 높이(그래버+헤더+카드 1개)
+/** peek 시 탭바 위로 보일 높이(그래버+헤더+카드 1개) — 지도 가시 영역 계산에도 공유 */
+export const PEEK_ABOVE_TABBAR = 172;
 const TOP_RESERVE_FALLBACK = 176; // 상단 필터 스택 실측 전 기본 여백
+
+/** 부모(MapExplorer)가 detent를 외부에서 스냅시키기 위한 핸들 */
+export interface MapSheetHandle {
+  snapTo(d: Detent): void;
+}
 
 /**
  * 지도 위 드래그 바텀시트 (iOS/Apple 지도식 3단 detent: peek/half/full).
  * 시트 바닥은 뷰포트 바닥(0)에 고정 — 탭바는 그 위를 덮으므로(스태킹), 스크롤 콘텐츠에
  * 탭바 높이만큼 하단 패딩을 줘서 목록이 탭바 뒤로 가려지지 않게 한다.
  * 위치는 detent(스냅) + dragY(드래그 중 임시 오프셋)에서 파생 — effect-내 setState 없음.
+ * detent 상태 소유권은 내부에 유지하고, ref 핸들(snapTo)로만 외부 제어를 허용한다.
  */
-export function MapSheet({
-  header,
-  children,
-}: {
-  header: ReactNode;
-  children: ReactNode;
-}) {
+export const MapSheet = forwardRef<
+  MapSheetHandle,
+  { header: ReactNode; children: ReactNode }
+>(function MapSheet({ header, children }, ref) {
   const sheetRef = useRef<HTMLDivElement>(null);
   const [sheetH, setSheetH] = useState(0);
   const [tabbarH, setTabbarH] = useState(58);
@@ -28,6 +39,18 @@ export function MapSheet({
   const [detent, setDetent] = useState<Detent>('peek');
   const [dragY, setDragY] = useState<number | null>(null);
   const dragStart = useRef<{ pointer: number; base: number } | null>(null);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      snapTo(d: Detent) {
+        dragStart.current = null;
+        setDragY(null);
+        setDetent(d);
+      },
+    }),
+    [],
+  );
 
   const detentY = useCallback(
     (d: Detent): number => {
@@ -129,4 +152,4 @@ export function MapSheet({
       </div>
     </div>
   );
-}
+});

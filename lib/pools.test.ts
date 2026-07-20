@@ -7,6 +7,7 @@
  */
 import { describe, expect, it } from 'vitest';
 import {
+  freeSwimTimeSummary,
   freshnessLabel,
   getPoolNowStatus,
   isSessionToday,
@@ -206,6 +207,61 @@ describe('resolveSessionPrice', () => {
 
   it('요금 데이터가 없으면 undefined', () => {
     expect(resolveSessionPrice(null, session({ tier: 'full' }))).toBeUndefined();
+  });
+});
+
+describe('freeSwimTimeSummary', () => {
+  const mon = at('2026-07-06 10:00'); // 월요일
+
+  it("day='today' — 오늘 요일 세션을 시작시각 순으로 요약", () => {
+    const p = pool([
+      session({ start: '12:00', end: '12:50' }),
+      session({ start: '06:00', end: '07:50' }),
+    ]);
+    expect(freeSwimTimeSummary(p, 'today', mon)).toBe(
+      '06:00~07:50, 12:00~12:50',
+    );
+  });
+
+  it("day='today' — weeksOfMonth 조건이 어긋나는 세션은 제외", () => {
+    // 2·4주차 일요일 세션 — 1주차 일요일(07-05)엔 요약 없음
+    const p = pool([session({ dayCodes: [0], weeksOfMonth: [2, 4] })]);
+    expect(freeSwimTimeSummary(p, 'today', at('2026-07-05 10:00'))).toBeNull();
+    expect(freeSwimTimeSummary(p, 'today', at('2026-07-12 10:00'))).toBe(
+      '06:00~07:50',
+    );
+  });
+
+  it('요일 코드 — 그 요일 세션만 요약(주차 조건은 근사상 무시)', () => {
+    const p = pool([
+      session({ dayCodes: [1, 2, 3], start: '06:00', end: '07:50' }),
+      session({ dayCodes: [6], start: '09:00', end: '10:50' }),
+    ]);
+    expect(freeSwimTimeSummary(p, 6, mon)).toBe('09:00~10:50');
+    expect(freeSwimTimeSummary(p, 3, mon)).toBe('06:00~07:50');
+  });
+
+  it('세션 3개 이상 → 앞 2개 + "외 N회"', () => {
+    const p = pool([
+      session({ start: '06:00', end: '07:50' }),
+      session({ start: '09:00', end: '09:50' }),
+      session({ start: '12:00', end: '12:50' }),
+      session({ start: '15:00', end: '15:50' }),
+    ]);
+    expect(freeSwimTimeSummary(p, 1, mon)).toBe(
+      '06:00~07:50, 09:00~09:50 외 2회',
+    );
+  });
+
+  it('기준일 세션 0개 → null', () => {
+    const p = pool([session({ dayCodes: [1, 2, 3, 4, 5] })]);
+    expect(freeSwimTimeSummary(p, 6, mon)).toBeNull();
+  });
+
+  it('자유수영 정보 부재(listing) → null', () => {
+    const p = { ...pool([]), freeSwim: null } as Pool;
+    expect(freeSwimTimeSummary(p, 'today', mon)).toBeNull();
+    expect(freeSwimTimeSummary(pool([]), 1, mon)).toBeNull();
   });
 });
 
