@@ -432,7 +432,9 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
   );
 
   return (
-    <div className="fixed inset-0 mx-auto w-full max-w-md overflow-hidden bg-bg">
+    // overflow-clip: hidden과 달리 scrollIntoView·포커스 자동 스크롤로 인한 숨은
+    // 스크롤을 원천 차단 — 앱 셸이 밀려 필터/카드가 뷰포트 밖으로 나가는 버그 방지
+    <div className="fixed inset-0 mx-auto w-full max-w-md overflow-clip bg-bg">
       <h1 className="sr-only">오늘수영 지도 — 내 주변 자유수영장</h1>
 
       {/* 지도 or 폴백 배경 */}
