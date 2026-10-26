@@ -1,52 +1,71 @@
-# PROJECT: oneul-swim-frontend 현황판
+---
+project: oneul-swim-frontend
+type: project-status
+status: 운영
+updated: 2026-10-26
+---
 
-> 갱신일: 2026-07-31 (7/20 지도 UIUX 개선 + 7/30 프로덕션 시각검증·Vercel 환경변수 등록 확인 반영)
-> 히스토리·의사결정 정본: obsidian vault `projects/oneul-swim.md` (private)
-> 로드맵: [plan-2026-07-frontend-renewal.md](./plan-2026-07-frontend-renewal.md) · [plan-2026-07-enhancement.md](./plan-2026-07-enhancement.md)
+# PROJECT: oneul-swim-frontend 온보딩 시트
 
-## 현재 상태
+> **이 문서는 리포 온보딩·아키텍처·고정 함정 시트다.**
+> - **현재 라이브 배포 기준**: Vercel 대시보드(Production 배포 = main 최신 커밋) · `git log`
+> - **남은 일·결정 필요**: GitHub Issues (리포 점검 체크리스트 = "허브 기준 점검 2026-10-26" 이슈)
+> - **변경 이력·왜 그렇게 정했는지**: `git log`·PR, 기획 로드맵 [plan-2026-07-frontend-renewal.md](plan-2026-07-frontend-renewal.md) · [plan-2026-07-enhancement.md](plan-2026-07-enhancement.md)
+> - 2026-07-31 이전 현황판은 [archive/status-2026-07-31.md](archive/status-2026-07-31.md)(작성 시점 값으로 고정). 이 문서에는 날짜별 진행 상태를 적지 않는다.
 
-- 전국 공공 수영장 603곳의 자유수영 정보(지금 상태·시간표·요금)를 제공하는 PWA(시간표 full 82곳, 나머지 리스팅). Vercel 배포(main 자동), 백엔드 API 연동(제보·아침 요약 푸시·강습 접수소식).
-- 폴백 원칙: API·Kakao 키 장애 시에도 정적 `data/pools.json`으로 항상 동작. 홈·지도·시설상세는 `GET /pools` 우선(force-dynamic) + 정적 폴백.
-- 미니 어드민(`/admin`, noindex, Bearer 토큰): 제보 처리·데이터/요금 수정·신선도 알림·접수소식 발송.
+## 요약
 
-## 진행 중
+전국 공공 수영장(약 600곳)의 자유수영 정보(지금 가능 여부·시간표·요금·위치)를 보여주는 PWA. 홈은 내 위치 기반 지도 퍼스트 화면이고,
+제보·아침 요약 푸시·강습 접수 소식 알림은 백엔드 API([oneul-swim-backend](https://github.com/Yeonji-Gonji/oneul-swim-backend))와 연동한다.
 
-- 없음 (코드 P0~P4 완료. 아래는 사용자 액션 대기)
+## 핵심 사양
 
-## 사용자 액션 대기 (코드 완료, 외부 설정만 남음)
+- **스택**: Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Kakao Maps SDK · Web Push · PWA(manifest·sw.js)
+- **패키지 매니저 / dev 포트**: pnpm / `pnpm dev` → http://localhost:3000
+- **도메인 / 배포 타겟**: `https://oneul-swim.vercel.app` (Vercel, main push 자동 배포. `NEXT_PUBLIC_SITE_URL` 로 도메인 주입)
+- **백엔드 API**: `NEXT_PUBLIC_API_URL` = `https://oneul-swim.duckdns.org` (`GET /pools`, 제보, 구독)
+- **테스트**: vitest (`lib/pools.test.ts`·`lib/regions.test.ts`) · CI = `.github/workflows/ci.yml`(lint → typecheck → test → build, PR·main)
 
-- ✅ Vercel 환경변수 — 2026-07-30 등록 확인: `NEXT_PUBLIC_KAKAO_MAP_KEY`(6/2)·`NEXT_PUBLIC_VAPID_PUBLIC_KEY`(7/5)·`NEXT_PUBLIC_API_URL`(7/10)·`NEXT_PUBLIC_KAKAO_REST_KEY`(7/11) 전부 Production+Preview 등록, 7/20 배포 빌드에 반영됨. `NEXT_PUBLIC_GA_ID`(선택)만 미설정.
-- 카카오 콘솔: Web 플랫폼 도메인 등록은 ✅ 완료(7/30 프로덕션 지도 정상 확인). **카카오 로그인 활성화 + Redirect URI(`https://oneul-swim.vercel.app/admin`, `http://localhost:3000/admin`) 등록 여부는 미확인** — 어드민 카카오 로그인 1회 시도로 판별.
-- 서버 .env: `ADMIN_TOKEN`·VAPID는 7/11 배포 때 설정됨. **`ADMIN_KAKAO_ID`·`KAKAO_REST_KEY`(어드민 카카오 로그인용, 7/11 코드 추가분) 설정 여부 확인 필요**.
-- 실기기(Android Chrome) 푸시 구독 → 다음날 08:00 아침 요약 수신 확인
-- TWA 스토어 출시: 실서명 SHA256 → assetlinks 교체 → 등록 (docs/twa-release.md)
+## 배포 · 환경 구조 (고정 규칙 및 함정)
 
-## 최근 완료
+- **배포 방식**: Vercel Git 연동. main 머지가 곧 운영 배포이므로 main 에 직접 push 하지 않고 브랜치 → PR → CI 통과 → 머지.
+  Preview 배포는 PR 마다 자동.
+- **런타임 환경변수(Vercel Production + Preview 에 등록)**: 전부 `NEXT_PUBLIC_*` 라 빌드 시 인라인된다. 값을 바꾸면 재배포가 필요하다.
 
-- 2026-07-30 **프로덕션 시각검증 완료**: `https://oneul-swim.vercel.app` Playwright 확인 — 지도 타일·클러스터·글라스 필터 3종·바텀시트("전국 수영장 603곳") 정상, 콘솔 에러 0. Kakao JS 키의 배포 도메인 등록 유효 확인(401 폴백 이슈 해소).
-- 2026-07-20 지도 UIUX 개선: `DayStatus`·`PoolFloatingBox` 신규 + `MapExplorer` 리팩터(마커 선택 시 플로팅박스). 플로팅박스 앵커는 CSS transform 처리(ADR-008), 필터 이탈 시 선택 해제는 렌더 중 보정(ADR-009). vitest 35 + 스모크 통과.
-- 2026-07-11 프론트 리뉴얼 **Phase E: 맵-퍼스트 레이아웃 재배치**(Apple Maps 최신 UI 레퍼런스): 홈을 **내 위치 기반 지도-퍼스트**로 전면 재배치. `MapExplorer`(풀스크린 지도+geolocation+상태색 마커+MarkerClusterer+현위치+선택 미니카드) + `MapSheet`(3단 detent 드래그 바텀시트) + 플로팅 글라스(.glass-panel) **필터 3종(지역/날짜/상태)** + `lib/geo.ts`. 상태 필터 = 전체 / 지금 운영중 / **오픈 준비중(=운영중 아닌 전부)**. `/map`→홈 리다이렉트, 구 HomeClient·FilterChips·PullToRefresh·ViewToggle·MapView 삭제(PoolCard는 /pools SEO용 존치). **검증 완료(localhost:3000, Playwright)**: 지도·마커·클러스터·geolocation·거리정렬·3필터·시트 정상, 상태 카운트(604/5/599). 바텀시트-탭바 겹침 수정(시트 바닥 뷰포트 고정+콘텐츠 탭바높이 패딩). (D 로그인보다 먼저 착수 = 사용자 지시)
-- 2026-07-11 프론트 리뉴얼 Phase B(디자인)·C(UX): iOS풍 토큰 개편 + **다크모드**(prefers-color-scheme, `[data-theme]` 토글 훅) + elevation/shadow 토큰 + safe-area(env inset·viewportFit cover) / 컴포넌트 일괄 리스타일(버튼·칩·카드·글래스 탭바·바텀시트) / 스켈레톤 로딩(loading.tsx)·`<main>` 라우트 전환 애니·pull-to-refresh(router.refresh)·listing 빈 상태 개선. 검증 그린(typecheck/lint/test29/build231) + 라이트·다크 시각 확인. 상세 로드맵 [plan-2026-07-frontend-renewal.md](./plan-2026-07-frontend-renewal.md). ⚠️ 커밋·푸시는 사용자 몫.
-- 2026-07-11 어드민 시간표 초안 검수 UI + 카카오 로그인: `/admin`에 "시간표 초안" 탭(승인/반려·근거 스니펫 표시), 카카오 로그인 게이트(본인 계정만 백엔드가 `ADMIN_TOKEN` 발급 → 기존 Bearer 인증 재사용). 기존 토큰 입력은 비상용 폴백으로 유지.
-- 2026-07-11 P4: `SOON_THRESHOLD_MIN` 임계값 실제 로직에 적용 (데드코드 정리)
-- 2026-07-11 P4: 디자인 토큰 이중 관리 해소 (`globals.css` @theme 단일 소스로 통합)
+  | 키 | 역할 | 없을 때 |
+  |---|---|---|
+  | `NEXT_PUBLIC_SITE_URL` | 메타·사이트맵·OG 의 기준 URL | `https://oneul-swim.vercel.app` 폴백 |
+  | `NEXT_PUBLIC_API_URL` | 백엔드 API 주소 | 정적 `data/pools.json` 폴백, 제보는 UX 만 동작 |
+  | `NEXT_PUBLIC_KAKAO_MAP_KEY` | 카카오 지도 JavaScript 키 | 지도 대신 권역 핀 버튼 폴백 |
+  | `NEXT_PUBLIC_KAKAO_REST_KEY` | 어드민 카카오 로그인(REST 키) | 어드민은 토큰 직접 입력 폴백 |
+  | `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | Web Push 공개키(백엔드와 짝) | 아침 요약 토글이 "서버 준비 중" 안내 |
+  | `NEXT_PUBLIC_GA_ID` | GA4 측정 ID(선택) | 계측 비활성 |
 
-- 2026-07-09 P1 Vitest 도입: lib/pools 상태·주차 규칙 단위테스트 22개 + CI test 스텝
-- 2026-07-09 P3 프론트: `GET /pools` API 우선 로딩(lib/pools-data.ts) + 정적 폴백, 미니 어드민(`/admin`), 제보 루프 완성(APPLIED 강조·처리시각)
-- 2026-07-09 P4: GA4 측정(env 게이트, report_submit·push_subscribe), 강습 "접수 소식 알림" 서버구독 재정의, TWA 출시 절차 문서화
-- 2026-07-09 P0: TabBar 낡은 주석 정정
-- 2026-07-05 비기능 요소 전면 실기능화 / 제보 전송 백엔드 연동
+- **폴백 원칙**: API·카카오 키 장애 시에도 정적 `data/pools.json` 으로 항상 동작한다. 홈·지도·시설 상세는 `GET /pools` 우선(force-dynamic) + 정적 폴백.
+- **운영·검증 함정**
+  - 카카오 지도 키는 카카오 개발자 콘솔 "Web 플랫폼 도메인"에 배포 도메인이 등록돼야 한다. 미등록이면 401 → 폴백 화면이 뜨고 에러는 콘솔에만 남는다.
+  - 어드민 카카오 로그인은 콘솔의 "카카오 로그인" 활성화 + Redirect URI(`<도메인>/admin`, `http://localhost:3000/admin`) 등록이 필요하다.
+  - `/admin` 은 noindex. Bearer 토큰은 백엔드 `ADMIN_TOKEN` 과 같아야 한다.
+  - 배포 후 확인: 홈 지도 타일·마커·바텀시트 렌더, 브라우저 콘솔 에러 0, `curl -s https://oneul-swim.vercel.app | grep -c '오늘수영'` 이 1 이상.
+  - 하이드레이션 함정: 브라우저 전용 판정(`isPushSupported()` 등)은 렌더 중에 하지 말고 `useSyncExternalStore` 게이트로 클라이언트에서만 평가한다(React #418 재발 방지).
+- **TWA(안드로이드 스토어)**: 절차 = [twa-release.md](twa-release.md). `public/.well-known/assetlinks.json` 은 서명 지문 자리표시자 상태.
 
-## 알려진 이슈 / 남은 일
+## 아키텍처 · 기능 모듈 지도
 
-- 좌표·주소 null 이슈는 해소됨(4곳 전부 lat/lng/address 존재)
-- 리뉴얼 진행(로드맵 참조): 프론트 단독 **A~C + E(맵-퍼스트) 구현 완료**. 남은 **D 카카오 로그인·회원제**(비회원=열람+제보만 / 회원=구독+일일 자유수영 알림)는 기획 산출물 완료(요구사항→시나리오→화면기획→spec, ADR-001~007)·구현 미착수. **F TWA 스토어**는 외부 등록 필요 → 사용자 액션 대기.
-- ✅ Phase E 지도 렌더링: localhost 검증(7/11)에 이어 **프로덕션 시각검증 완료(2026-07-30)** — Vercel 배포 도메인의 카카오 콘솔 Web 플랫폼 등록 확인됨.
-- ✅ `/more` 하이드레이션 에러(React #418) 수정: 렌더 중 `isPushSupported()`(SSR false/CSR true) → `useSyncExternalStore` hydration 게이트로 클라이언트에서만 평가. Playwright 콘솔 0 errors 확인.
-- (선택) 다크모드 수동 토글 UI: 토큰·`[data-theme]` 훅은 준비됨. 현재는 시스템 설정 자동 추종. 노플래시 스크립트+토글 추가 시 `/more`에 배치 예정.
+| 영역 | 경로 / 모듈 | 역할 및 고정 규칙 |
+| --- | --- | --- |
+| 홈(지도 퍼스트) | `app/page.tsx`, `components/map/`(MapExplorer·MapSheet·필터 3종) | geolocation + 상태색 마커 + 클러스터 + 3단 바텀시트. `/map` 은 홈으로 리다이렉트 |
+| 시설 목록·상세 | `app/pools/[sido]/[sigungu]`, `app/pool/[id]`, `components/pool/` | SEO 용 정적 목록 + 상세. 데이터는 `lib/pools-data.ts`(API 우선 → 정적 폴백) |
+| 상태 판정 | `lib/pools.ts`, `lib/time.ts`, `lib/regions.ts` | "지금 운영 중·곧 시작" 규칙. 단위테스트 대상 |
+| 제보 | `app/reports/`, `lib/report-api.ts`, `components/report/` | `POST /reports` 로 전송. API 없으면 접수 UX 만 |
+| 푸시·알림 | `lib/push.ts`, `components/ServiceWorkerRegister.tsx`, `public/sw.js`, `app/lessons/` | VAPID 구독, 아침 요약·강습 접수 소식 |
+| 미니 어드민 | `app/admin/`, `lib/admin-api.ts`, `components/admin/` | 제보 처리·시설/요금 수정·신선도 알림·접수소식 발송·시간표 초안 검수 |
+| SEO·메타 | `constants/site.ts`, `components/seo/`, `app/sitemap.ts`, `app/robots.ts`, `app/llms.txt` | 단일 출처 = `constants/site.ts` |
+| 디자인 토큰 | `app/globals.css`(@theme), `constants/tokens.ts` | 토큰 단일 소스는 `globals.css`. 다크모드 = `prefers-color-scheme` + `[data-theme]` 훅 |
+| 계측 | `components/analytics/`, `lib/analytics.ts` | `NEXT_PUBLIC_GA_ID` 게이트. 이벤트 `report_submit`·`push_subscribe` |
 
-## 링크
+## 참고 / 외부 링크
 
-- 백엔드: `../oneul-swim-backend` (API `https://oneul-swim.duckdns.org`)
-- GitHub: Yeonji-Gonji/oneul-swim-frontend
+- 백엔드: [oneul-swim-backend](https://github.com/Yeonji-Gonji/oneul-swim-backend) (`docs/OPERATIONS.md` 에 서버 운영 절차)
+- 이슈 추적: GitHub Issues
+- 의사결정 기록: `docs/adr/` (첫 ADR 작성 시 생성. 리뉴얼 당시 ADR-001~009 는 리포 밖에 있어 이 리포에서는 찾을 수 없다)

@@ -1,9 +1,10 @@
 # 오늘수영 (oneul-swim)
 
-하남 자유수영 정보앱 MVP. 권역별 수영장의 **지금 자유수영 가능 여부 · 요금 · 위치**를 한눈에 보여준다.
+전국 공공 수영장의 **지금 자유수영 가능 여부 · 시간표 · 요금 · 위치**를 지도에서 한눈에 보여주는 PWA.
+배포: https://oneul-swim.vercel.app · 온보딩 시트: [docs/PROJECT.md](docs/PROJECT.md)
 
 - **스택**: Next.js 16 (App Router) · React 19 · TypeScript · Tailwind CSS v4 · Kakao Maps · PWA
-- **데이터**: 정적 JSON (`data/pools.json`, `data/private-pools.json`)
+- **데이터**: 백엔드 API `GET /pools` 우선, 정적 JSON(`data/pools.json`) 폴백
 - **패키지 매니저**: pnpm
 
 ## 개발
@@ -17,9 +18,14 @@ pnpm dev          # http://localhost:3000
 
 ```bash
 NEXT_PUBLIC_KAKAO_MAP_KEY=<카카오 JavaScript 키>
+NEXT_PUBLIC_KAKAO_REST_KEY=<카카오 REST 키 (어드민 카카오 로그인)>
 NEXT_PUBLIC_API_URL=<oneul-swim-backend 주소, 예: https://api.example.com>
 NEXT_PUBLIC_VAPID_PUBLIC_KEY=<백엔드와 짝인 Web Push 공개키>
+NEXT_PUBLIC_SITE_URL=<배포 도메인, 로컬은 생략 가능>
+NEXT_PUBLIC_GA_ID=<GA4 측정 ID, 선택>
 ```
+
+키별 역할과 없을 때의 폴백은 [docs/PROJECT.md](docs/PROJECT.md) 의 환경변수 표가 기준이다.
 
 > 키가 없거나 도메인 미등록(401)이면 지도는 **권역 핀 버튼 폴백**으로 동작한다. 앱은 키 없이도 빌드·구동된다.
 > `NEXT_PUBLIC_API_URL`이 없으면 제보는 전송 없이 접수 UX만 동작한다(정적 MVP 폴백).
@@ -34,10 +40,12 @@ NEXT_PUBLIC_VAPID_PUBLIC_KEY=<백엔드와 짝인 Web Push 공개키>
 | `pnpm start` | 빌드 결과 실행 |
 | `pnpm lint` | ESLint |
 | `pnpm typecheck` | `tsc --noEmit` 타입 검사 |
+| `pnpm test` | vitest 단위테스트 |
 
 ## CI/CD
 
-- **CI** — `.github/workflows/ci.yml`. `main` 푸시 및 PR마다 **lint → typecheck → build** 게이트 실행.
+- **CI** — `.github/workflows/ci.yml`. `main` 푸시 및 PR마다 **lint → typecheck → test → build** 게이트 실행(문서 전용 변경은 제외).
+- **배포** — Vercel Git 연동, main 머지 = 운영 배포. main 직접 push 대신 브랜치 → PR → CI 통과 → 머지.
 - **CD** — Vercel GitHub 연동. `main` 푸시 시 프로덕션 자동 배포, PR마다 프리뷰 URL 생성.
 
 ### Vercel 최초 연동 (1회)
