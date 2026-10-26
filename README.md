@@ -41,6 +41,7 @@ NEXT_PUBLIC_GA_ID=<GA4 측정 ID, 선택>
 | `pnpm lint` | ESLint |
 | `pnpm typecheck` | `tsc --noEmit` 타입 검사 |
 | `pnpm test` | vitest 단위테스트 |
+| `pnpm test:smoke` | 배포된 URL(`SMOKE_URL`)에 Playwright 스모크 |
 
 ## CI/CD
 
