@@ -1,0 +1,52 @@
+# 배포 후 스모크: Vercel Production 배포가 성공하면(deployment_status) 운영 URL 에 Playwright 로
+# 홈 렌더·수영장 개수·앱 오류 0, 시설 목록, catch-all 이동을 확인한다(e2e/smoke.spec.ts).
+# Preview 배포 URL 은 Vercel 인증 보호가 걸려 있어 Production 만 본다. 수동 실행은 url 입력으로.
+name: Smoke (post-deploy)
+
+on:
+  deployment_status:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 검사할 URL
+        required: false
+        default: https://oneul-swim.vercel.app
+
+concurrency:
+  group: smoke-${{ github.event.deployment.id || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment.environment == 'Production')
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SMOKE_URL: ${{ inputs.url || 'https://oneul-swim.vercel.app' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.deployment.sha || github.sha }}
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Chromium 설치
+        run: pnpm exec playwright install --with-deps chromium
+      - name: 스모크
+        run: pnpm test:smoke
+      - name: 실패 시 화면·추적 보관
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-results
+          path: test-results/
+          retention-days: 7

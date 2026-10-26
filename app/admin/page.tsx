@@ -10,15 +10,13 @@ import { ReportsSection } from '@/components/admin/ReportsSection';
 import { PoolsSection } from '@/components/admin/PoolsSection';
 import { FreshnessSection } from '@/components/admin/FreshnessSection';
 import { AnnounceSection } from '@/components/admin/AnnounceSection';
-import { ScheduleDraftsSection } from '@/components/admin/ScheduleDraftsSection';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const KAKAO_REST_KEY = process.env.NEXT_PUBLIC_KAKAO_REST_KEY;
 
-type Tab = 'drafts' | 'reports' | 'pools' | 'freshness' | 'announce';
+type Tab = 'reports' | 'pools' | 'freshness' | 'announce';
 
 const TABS: { key: Tab; label: string }[] = [
-  { key: 'drafts', label: '시간표 초안' },
   { key: 'reports', label: '제보 관리' },
   { key: 'pools', label: '데이터 수정' },
   { key: 'freshness', label: '신선도 알림' },
@@ -32,7 +30,7 @@ export default function AdminPage() {
   const [token, setToken] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
   const [input, setInput] = useState('');
-  const [tab, setTab] = useState<Tab>('drafts');
+  const [tab, setTab] = useState<Tab>('reports');
   const [loginError, setLoginError] = useState<string | null>(null);
   const [exchanging, setExchanging] = useState(false);
 
@@ -211,7 +209,6 @@ export default function AdminPage() {
         ))}
       </div>
 
-      {tab === 'drafts' && <ScheduleDraftsSection request={request} />}
       {tab === 'reports' && <ReportsSection request={request} />}
       {tab === 'pools' && <PoolsSection request={request} />}
       {tab === 'freshness' && <FreshnessSection request={request} />}
