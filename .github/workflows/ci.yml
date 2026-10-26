@@ -3,8 +3,14 @@ name: CI
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
   pull_request:
     branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**.md'
 
 # 같은 브랜치에서 새 푸시가 오면 이전 실행은 취소 (큐 절약)
 concurrency:
