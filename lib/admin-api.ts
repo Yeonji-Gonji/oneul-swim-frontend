@@ -33,7 +33,10 @@ export const ADMIN_TOKEN_KEY = 'oneul-swim:admin-token';
  * 카카오 인가 URL. 로그인 후 code 를 붙여 redirectUri 로 돌아온다.
  * client_id 는 카카오 REST 키(공개용). 백엔드가 code 를 검증해 본인 계정만 토큰 발급.
  */
-export const kakaoAuthorizeUrl = (restKey: string, redirectUri: string): string =>
+export const kakaoAuthorizeUrl = (
+  restKey: string,
+  redirectUri: string,
+): string =>
   `https://kauth.kakao.com/oauth/authorize?client_id=${encodeURIComponent(
     restKey,
   )}&redirect_uri=${encodeURIComponent(redirectUri)}&response_type=code`;

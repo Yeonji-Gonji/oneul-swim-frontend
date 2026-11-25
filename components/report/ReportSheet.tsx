@@ -51,8 +51,7 @@ export function ReportSheet({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={buttonClass('outline')}
-      >
+        className={buttonClass('outline')}>
         <IconFlag className="size-4.5" />
         정보 틀렸어요 제보
       </button>
@@ -93,8 +92,7 @@ export function ReportSheet({
                     <Chip
                       key={r}
                       selected={reason === r}
-                      onClick={() => setReason(r)}
-                    >
+                      onClick={() => setReason(r)}>
                       {r}
                     </Chip>
                   ))}
@@ -123,8 +121,7 @@ export function ReportSheet({
                 <Button
                   className="mt-4"
                   disabled={!reason || state === 'sending'}
-                  onClick={send}
-                >
+                  onClick={send}>
                   {state === 'sending' ? '보내는 중…' : '제보 보내기'}
                 </Button>
               </>

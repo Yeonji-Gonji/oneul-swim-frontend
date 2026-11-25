@@ -57,7 +57,10 @@ export const isSessionToday = (
   ) {
     return false;
   }
-  if (session.weeksOfMonth && !session.weeksOfMonth.includes(weekOfMonth(now))) {
+  if (
+    session.weeksOfMonth &&
+    !session.weeksOfMonth.includes(weekOfMonth(now))
+  ) {
     return false;
   }
   return true;
@@ -188,5 +191,3 @@ export const freshnessLabel = (updatedAt: string, now: Dayjs): string => {
   if (diffDays === 1) return '어제 업데이트';
   return `${diffDays}일 전 업데이트`;
 };
-
-

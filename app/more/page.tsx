@@ -69,7 +69,9 @@ export default function MorePage() {
         <div className="rounded-input bg-surface p-4 shadow-card">
           <div className="flex items-center justify-between">
             <div className="flex flex-col gap-1">
-              <span className="text-body text-text">오늘 자유수영 아침 요약</span>
+              <span className="text-body text-text">
+                오늘 자유수영 아침 요약
+              </span>
               <span className="text-xs text-text-sub">매일 오전 8시 푸시</span>
             </div>
             <Toggle
@@ -109,16 +111,14 @@ export default function MorePage() {
                 {'href' in item && item.href ? (
                   <Link
                     href={item.href}
-                    className="flex w-full items-center justify-between py-4 text-left"
-                  >
+                    className="flex w-full items-center justify-between py-4 text-left">
                     {inner}
                   </Link>
                 ) : (
                   <button
                     type="button"
                     onClick={item.onClick}
-                    className="flex w-full items-center justify-between py-4 text-left"
-                  >
+                    className="flex w-full items-center justify-between py-4 text-left">
                     {inner}
                   </button>
                 )}
@@ -130,20 +130,25 @@ export default function MorePage() {
 
         {/* 데이터 기준 안내 */}
         <div className="rounded-input bg-surface p-4 shadow-card">
-          <h2 className="text-sm font-bold text-text">데이터는 이렇게 관리해요</h2>
+          <h2 className="text-sm font-bold text-text">
+            데이터는 이렇게 관리해요
+          </h2>
           <p className="mt-2 text-[13px] leading-relaxed text-text-sub">
             시간표·요금은 하남도시공사 공식 페이지 기준이며 운영자가 주기적으로
             점검합니다. 분기·시즌마다 바뀔 수 있으니 방문 전 전화 확인을
             권장해요.
           </p>
           <p className="mt-3 text-xs text-text-sub">
-            마지막 갱신 {lastUpdated && dayjs(lastUpdated).format('YYYY.MM.DD')} ·
-            공공 {pools.length}곳
+            마지막 갱신 {lastUpdated && dayjs(lastUpdated).format('YYYY.MM.DD')}{' '}
+            · 공공 {pools.length}곳
           </p>
         </div>
       </main>
 
-      <FeedbackSheet open={feedbackOpen} onClose={() => setFeedbackOpen(false)} />
+      <FeedbackSheet
+        open={feedbackOpen}
+        onClose={() => setFeedbackOpen(false)}
+      />
       <TabBar active="more" />
     </>
   );

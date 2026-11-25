@@ -23,15 +23,13 @@ export function TabBar({ active = 'home' }: { active?: string }) {
               className={cn(
                 'flex flex-col items-center gap-1',
                 isActive ? 'text-primary' : 'text-closed',
-              )}
-            >
+              )}>
               <Icon className="size-5" />
               <span
                 className={cn(
                   'text-micro',
                   isActive ? 'font-bold' : 'font-normal',
-                )}
-              >
+                )}>
                 {label}
               </span>
             </span>

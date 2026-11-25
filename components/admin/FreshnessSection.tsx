@@ -54,14 +54,12 @@ export function FreshnessSection({ request }: { request: AdminRequest }) {
       {alerts.map((a) => (
         <div
           key={a.id}
-          className="flex flex-col gap-2 rounded-input border border-line bg-surface p-4"
-        >
+          className="flex flex-col gap-2 rounded-input border border-line bg-surface p-4">
           <a
             href={a.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="break-all text-sm font-bold text-primary underline"
-          >
+            className="break-all text-sm font-bold text-primary underline">
             {a.url}
           </a>
           <span className="text-xs text-text-sub">
@@ -71,8 +69,7 @@ export function FreshnessSection({ request }: { request: AdminRequest }) {
             type="button"
             disabled={busyId === a.id}
             onClick={() => resolve(a.id)}
-            className="w-fit rounded-button border border-primary px-3 py-1.5 text-xs font-bold text-primary disabled:opacity-50"
-          >
+            className="w-fit rounded-button border border-primary px-3 py-1.5 text-xs font-bold text-primary disabled:opacity-50">
             처리됨
           </button>
         </div>

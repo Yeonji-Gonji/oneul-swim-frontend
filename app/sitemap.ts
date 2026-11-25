@@ -43,10 +43,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [
-    ...staticEntries,
-    ...sidoEntries,
-    ...sigunguEntries,
-    ...poolEntries,
-  ];
+  return [...staticEntries, ...sidoEntries, ...sigunguEntries, ...poolEntries];
 }

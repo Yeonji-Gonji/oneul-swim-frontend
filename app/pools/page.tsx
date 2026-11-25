@@ -27,8 +27,8 @@ export default async function PoolsIndexPage() {
 
         {/* 답변형 요약(GEO): 검색·AI 인용용 한두 문장 */}
         <p className="text-sm leading-relaxed text-text-sub">
-          전국 공공 수영장 {total}곳의 자유수영 정보를 지역별로 모았어요. 아래에서
-          시도를 골라 오늘 자유수영 시간과 요금을 확인하세요.
+          전국 공공 수영장 {total}곳의 자유수영 정보를 지역별로 모았어요.
+          아래에서 시도를 골라 오늘 자유수영 시간과 요금을 확인하세요.
         </p>
 
         <div className="grid grid-cols-2 gap-2.5">
@@ -36,8 +36,7 @@ export default async function PoolsIndexPage() {
             <Link
               key={sido}
               href={`/pools/${encodeURIComponent(sido)}`}
-              className="flex items-center justify-between rounded-input bg-surface px-4 py-3.5 shadow-card transition active:scale-[0.99]"
-            >
+              className="flex items-center justify-between rounded-input bg-surface px-4 py-3.5 shadow-card transition active:scale-[0.99]">
               <span className="text-body font-bold text-text">{sido}</span>
               <span className="shrink-0 text-sm text-text-sub">{count}곳</span>
             </Link>

@@ -22,8 +22,7 @@ export function Toggle({
       className={cn(
         'relative h-6 w-10 shrink-0 rounded-full transition-colors',
         on ? 'bg-primary' : 'bg-line',
-      )}
-    >
+      )}>
       <span
         className={cn(
           'absolute top-0.5 size-5 rounded-full bg-white shadow transition-all',

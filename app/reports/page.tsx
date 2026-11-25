@@ -75,7 +75,8 @@ export default function MyReportsPage() {
             </p>
             <p className="mt-2 text-sm leading-relaxed text-text-sub">
               시설 상세에서 잘못된 정보를 제보하면
-              <br />이곳에서 처리 상태를 볼 수 있어요.
+              <br />
+              이곳에서 처리 상태를 볼 수 있어요.
             </p>
           </div>
         )}
@@ -88,15 +89,13 @@ export default function MyReportsPage() {
               key={r.id}
               className={`flex flex-col gap-2 rounded-input bg-surface p-4 shadow-card ${
                 applied ? 'ring-2 ring-now-open' : ''
-              }`}
-            >
+              }`}>
               <div className="flex items-start justify-between gap-3">
                 <span className="text-body font-bold text-text">
                   {poolLabel(r.poolId)}
                 </span>
                 <span
-                  className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold ${badge.className}`}
-                >
+                  className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-bold ${badge.className}`}>
                   {badge.label}
                 </span>
               </div>
@@ -107,8 +106,7 @@ export default function MyReportsPage() {
               <span
                 className={`text-[13px] leading-relaxed ${
                   applied ? 'font-bold text-now-open-ink' : 'text-text-sub'
-                }`}
-              >
+                }`}>
                 {STATUS_HINT[r.status]}
               </span>
               <span className="text-xs text-text-sub">
@@ -123,8 +121,8 @@ export default function MyReportsPage() {
 
         {reports && reports.length > 0 && (
           <p className="text-xs leading-relaxed text-text-sub">
-            제보 내역은 이 기기 기준으로 최근 20건까지 보여요. 브라우저
-            데이터를 지우면 내역 연결이 끊어질 수 있어요.
+            제보 내역은 이 기기 기준으로 최근 20건까지 보여요. 브라우저 데이터를
+            지우면 내역 연결이 끊어질 수 있어요.
           </p>
         )}
       </main>

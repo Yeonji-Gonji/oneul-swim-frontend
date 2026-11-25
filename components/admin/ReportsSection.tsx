@@ -77,8 +77,7 @@ export function ReportsSection({ request }: { request: AdminRequest }) {
               filter === f.key
                 ? 'border-primary bg-primary-fill text-white'
                 : 'border-line bg-surface text-text'
-            }`}
-          >
+            }`}>
             {f.label}
           </button>
         ))}
@@ -95,8 +94,7 @@ export function ReportsSection({ request }: { request: AdminRequest }) {
       {reports.map((r) => (
         <div
           key={r.id}
-          className="flex flex-col gap-2 rounded-input border border-line bg-surface p-4"
-        >
+          className="flex flex-col gap-2 rounded-input border border-line bg-surface p-4">
           <div className="flex items-start justify-between gap-3">
             <span className="font-bold text-text">{poolLabel(r.poolId)}</span>
             <span className="shrink-0 rounded-full bg-bg px-2.5 py-1 text-xs font-bold text-text-sub">
@@ -117,8 +115,7 @@ export function ReportsSection({ request }: { request: AdminRequest }) {
                 type="button"
                 disabled={busyId === r.id}
                 onClick={() => changeStatus(r.id, s)}
-                className="rounded-button border border-primary px-3 py-1.5 text-xs font-bold text-primary disabled:opacity-50"
-              >
+                className="rounded-button border border-primary px-3 py-1.5 text-xs font-bold text-primary disabled:opacity-50">
                 {STATUS_LABEL[s]}(으)로
               </button>
             ))}

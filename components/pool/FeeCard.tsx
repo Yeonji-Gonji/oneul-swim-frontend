@@ -17,7 +17,8 @@ export function FeeCard({ pool }: { pool: Pool }) {
       <section className="flex w-full flex-col gap-2.5 rounded-input bg-surface p-4 shadow-card">
         <h2 className="text-body font-bold text-text">자유수영 이용권</h2>
         <p className="text-sm text-text-sub">
-          요금 정보가 아직 준비되지 않았어요. 아시는 정보가 있다면 제보해 주세요.
+          요금 정보가 아직 준비되지 않았어요. 아시는 정보가 있다면 제보해
+          주세요.
         </p>
       </section>
     );

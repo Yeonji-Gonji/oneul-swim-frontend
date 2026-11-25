@@ -30,8 +30,7 @@ export function Header(props: HeaderProps) {
       {props.variant === 'back' && (
         <Link
           href={props.backHref ?? '/'}
-          className="flex min-w-0 items-center gap-2 text-text"
-        >
+          className="flex min-w-0 items-center gap-2 text-text">
           <IconChevronLeft className="size-6 shrink-0" />
           <span className="truncate text-lg font-bold">{props.title}</span>
         </Link>
