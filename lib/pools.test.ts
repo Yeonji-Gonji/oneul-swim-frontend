@@ -21,7 +21,13 @@ const SEOUL = 'Asia/Seoul';
 
 /** 요금표 픽스처 (하남 공통 요금) */
 const FEES: PriceTiers = {
-  full: { 성인: 3300, 청소년: 2750, 경로: 2640, 어린이: 2200, 장애유공자: 1650 },
+  full: {
+    성인: 3300,
+    청소년: 2750,
+    경로: 2640,
+    어린이: 2200,
+    장애유공자: 1650,
+  },
   half: { 성인: 1650, 청소년: 1380, 경로: 1320, 어린이: 1100, 장애유공자: 830 },
 };
 
@@ -206,7 +212,9 @@ describe('resolveSessionPrice', () => {
   });
 
   it('요금 데이터가 없으면 undefined', () => {
-    expect(resolveSessionPrice(null, session({ tier: 'full' }))).toBeUndefined();
+    expect(
+      resolveSessionPrice(null, session({ tier: 'full' })),
+    ).toBeUndefined();
   });
 });
 
@@ -269,10 +277,19 @@ describe('sortPoolsByStatus', () => {
   const now = at('2026-07-06 06:30'); // 월요일 오전
 
   const openPool = pool([session({ start: '06:00', end: '07:50' })], 'open');
-  const soonNear = pool([session({ start: '07:00', end: '07:50' })], 'soonNear'); // 30분 뒤
+  const soonNear = pool(
+    [session({ start: '07:00', end: '07:50' })],
+    'soonNear',
+  ); // 30분 뒤
   const soonFar = pool([session({ start: '07:45', end: '08:50' })], 'soonFar'); // 75분 뒤 (soon 임계치 이내)
-  const closedPool = pool([session({ start: '05:00', end: '06:00' })], 'closed');
-  const nonePool = pool([session({ dayCodes: [6], start: '09:00', end: '10:50' })], 'none');
+  const closedPool = pool(
+    [session({ start: '05:00', end: '06:00' })],
+    'closed',
+  );
+  const nonePool = pool(
+    [session({ dayCodes: [6], start: '09:00', end: '10:50' })],
+    'none',
+  );
 
   it('open → soon(임박순) → closed-today → none-today 순 정렬', () => {
     const input = [nonePool, closedPool, soonFar, soonNear, openPool];

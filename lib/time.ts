@@ -19,4 +19,3 @@ export function nowInSeoul(): Dayjs {
 
 export { dayjs };
 export type { Dayjs };
-

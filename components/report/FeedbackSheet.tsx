@@ -85,8 +85,7 @@ export function FeedbackSheet({
             <Button
               className="mt-4"
               disabled={!text.trim() || state === 'sending'}
-              onClick={send}
-            >
+              onClick={send}>
               {state === 'sending' ? '보내는 중…' : '보내기'}
             </Button>
           </>

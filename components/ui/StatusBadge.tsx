@@ -60,8 +60,7 @@ export function StatusBadge({ status }: { status: NowStatus }) {
       className={cn(
         'inline-flex items-center gap-1.5 rounded-full px-2.5 py-1',
         v.pill,
-      )}
-    >
+      )}>
       <span className={cn('size-2 rounded-full', v.dot)} aria-hidden />
       <span className={cn('text-xs font-bold', v.ink)}>{v.label}</span>
     </span>

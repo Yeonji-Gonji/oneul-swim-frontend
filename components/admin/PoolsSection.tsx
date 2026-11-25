@@ -1,12 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import type {
-  FreeSwimTier,
-  Pool,
-  PoolsData,
-  PriceByTarget,
-} from '@/lib/types';
+import type { FreeSwimTier, Pool, PoolsData, PriceByTarget } from '@/lib/types';
 import type { AdminRequest } from '@/lib/admin-api';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
@@ -135,8 +130,7 @@ function PoolEditor({
       <select
         value={id}
         onChange={(e) => setId(e.target.value)}
-        className="rounded-input border border-line bg-bg p-2.5 text-sm text-text"
-      >
+        className="rounded-input border border-line bg-bg p-2.5 text-sm text-text">
         {pools.map((p) => (
           <option key={p.id} value={p.id}>
             {p.name}
@@ -192,8 +186,7 @@ function PoolEditor({
         type="button"
         disabled={busy}
         onClick={save}
-        className="rounded-button bg-primary px-4 py-3 text-sm font-bold text-white disabled:opacity-50"
-      >
+        className="rounded-button bg-primary px-4 py-3 text-sm font-bold text-white disabled:opacity-50">
         {busy ? '저장 중…' : '시설 저장'}
       </button>
     </div>
@@ -210,7 +203,8 @@ function FeesEditor({
   request: AdminRequest;
   onSaved: () => void;
 }) {
-  const [draft, setDraft] = useState<Record<FreeSwimTier, PriceByTarget>>(tiers);
+  const [draft, setDraft] =
+    useState<Record<FreeSwimTier, PriceByTarget>>(tiers);
   const [msg, setMsg] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -224,8 +218,7 @@ function FeesEditor({
     tier: FreeSwimTier,
     target: keyof PriceByTarget,
     value: number,
-  ) =>
-    setDraft((d) => ({ ...d, [tier]: { ...d[tier], [target]: value } }));
+  ) => setDraft((d) => ({ ...d, [tier]: { ...d[tier], [target]: value } }));
 
   const save = async () => {
     setMsg(null);
@@ -273,8 +266,7 @@ function FeesEditor({
         type="button"
         disabled={busy}
         onClick={save}
-        className="rounded-button bg-primary px-4 py-3 text-sm font-bold text-white disabled:opacity-50"
-      >
+        className="rounded-button bg-primary px-4 py-3 text-sm font-bold text-white disabled:opacity-50">
         {busy ? '저장 중…' : '요금표 저장'}
       </button>
     </div>

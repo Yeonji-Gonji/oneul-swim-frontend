@@ -1,0 +1,16 @@
+# 의사결정 기록·지난 계획은 사람이 맞춘 표·줄바꿈을 그대로 둔다
+docs/
+
+# 생성물
+pnpm-lock.yaml
+.next/
+out/
+next-env.d.ts
+test-results/
+playwright-report/
+
+# 정적 폴백 데이터는 백엔드 적재 결과를 그대로 옮긴 것이다(손으로 고치지 않음)
+data/
+
+# 그대로 서빙되는 파일. 서비스 워커(public/sw.js)는 바이트가 바뀌면 설치된 PWA 가 새 버전으로 다시 설치하므로 포맷만으로 바꾸지 않는다
+public/

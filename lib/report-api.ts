@@ -19,8 +19,7 @@ export function getDeviceId(): string {
 }
 
 export type SubmitReportResult =
-  | { ok: true }
-  | { ok: false; reason: 'no-backend' | 'network' };
+  { ok: true } | { ok: false; reason: 'no-backend' | 'network' };
 
 export async function submitReport(input: {
   poolId: string;

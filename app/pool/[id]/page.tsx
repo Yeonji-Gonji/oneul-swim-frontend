@@ -181,7 +181,9 @@ export default async function PoolDetailPage({
       )}
 
       <div className="flex w-full gap-2.5">
-        <a href={`tel:${pool.phone}`} className={cn(buttonClass('medium'), 'flex-1')}>
+        <a
+          href={`tel:${pool.phone}`}
+          className={cn(buttonClass('medium'), 'flex-1')}>
           <IconPhone className="size-4.5" />
           전화
         </a>
@@ -190,8 +192,7 @@ export default async function PoolDetailPage({
             href={kakaoTo}
             target="_blank"
             rel="noopener noreferrer"
-            className={cn(buttonClass('medium'), 'flex-1')}
-          >
+            className={cn(buttonClass('medium'), 'flex-1')}>
             <IconNavigation className="size-4.5" />
             길찾기
           </a>

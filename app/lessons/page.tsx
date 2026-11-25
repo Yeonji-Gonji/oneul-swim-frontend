@@ -103,8 +103,7 @@ export default function LessonsPage() {
             return (
               <div
                 key={key}
-                className="flex flex-col gap-2.5 rounded-input bg-surface p-4 shadow-card"
-              >
+                className="flex flex-col gap-2.5 rounded-input bg-surface p-4 shadow-card">
                 <div className="flex flex-col gap-1">
                   <span className="text-body font-bold text-text">
                     {pool.name} {lesson.name}

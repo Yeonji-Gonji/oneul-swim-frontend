@@ -38,8 +38,7 @@ export function PoolCard({
   return (
     <Link
       href={`/pool/${pool.id}`}
-      className="flex w-full flex-col items-start gap-2.5 rounded-input bg-surface p-4 shadow-card transition duration-150 active:scale-[0.98]"
-    >
+      className="flex w-full flex-col items-start gap-2.5 rounded-input bg-surface p-4 shadow-card transition duration-150 active:scale-[0.98]">
       <div className="flex w-full items-center justify-between">
         <span className="text-body font-bold text-text">{pool.name}</span>
         <span className="shrink-0 text-sm text-text-sub">

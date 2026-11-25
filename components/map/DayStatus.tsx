@@ -57,8 +57,7 @@ export function DayStatus({
         tone === 'open'
           ? 'bg-now-open-soft text-now-open-ink'
           : 'bg-closed-soft text-closed-ink',
-      )}
-    >
+      )}>
       <span
         className={cn(
           'size-2 rounded-full',

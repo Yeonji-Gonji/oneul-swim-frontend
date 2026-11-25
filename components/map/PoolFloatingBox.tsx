@@ -34,16 +34,14 @@ export function PoolFloatingBox({
             onClose();
           }}
           aria-label="닫기"
-          className="absolute -top-3 -right-3 flex size-11 items-center justify-center"
-        >
+          className="absolute -top-3 -right-3 flex size-11 items-center justify-center">
           <span className="flex size-6 items-center justify-center rounded-full bg-fill-secondary text-xs text-text-sub shadow-card">
             ✕
           </span>
         </button>
         <Link
           href={`/pool/${pool.id}`}
-          className="flex min-h-11 flex-col justify-center gap-1.5 pr-6"
-        >
+          className="flex min-h-11 flex-col justify-center gap-1.5 pr-6">
           <span className="truncate text-body font-bold text-text">
             {pool.name}
           </span>

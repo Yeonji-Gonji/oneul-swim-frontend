@@ -64,8 +64,7 @@ export function AnnounceSection({ request }: { request: AdminRequest }) {
         type="button"
         disabled={busy || !title.trim() || !body.trim()}
         onClick={send}
-        className="rounded-button bg-primary px-4 py-3 text-sm font-bold text-white disabled:opacity-50"
-      >
+        className="rounded-button bg-primary px-4 py-3 text-sm font-bold text-white disabled:opacity-50">
         {busy ? '보내는 중…' : '전체 발송'}
       </button>
     </section>

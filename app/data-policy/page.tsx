@@ -19,9 +19,8 @@ export default function DataPolicyPage() {
           <h2 className="text-sm font-bold text-text">어디서 가져오나요</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-text-sub">
             시간표·요금·운영 정보는 하남도시공사 공식 홈페이지에 공개된 자료를
-            기준으로 합니다. 추측하거나 지어내는 정보는 싣지 않아요. 공식
-            자료에 없는 항목(예: 강습 등록일)은 &ldquo;시설 확인&rdquo;으로
-            표기합니다.
+            기준으로 합니다. 추측하거나 지어내는 정보는 싣지 않아요. 공식 자료에
+            없는 항목(예: 강습 등록일)은 &ldquo;시설 확인&rdquo;으로 표기합니다.
           </p>
         </section>
 
@@ -29,8 +28,8 @@ export default function DataPolicyPage() {
           <h2 className="text-sm font-bold text-text">어떻게 검증하나요</h2>
           <p className="mt-2 text-[13px] leading-relaxed text-text-sub">
             운영자가 공식 페이지를 주기적으로 점검해 변경 사항을 반영하고,
-            이용자 제보가 들어오면 원문과 대조해 확인 후 갱신합니다. 반영
-            결과는 &lsquo;내 제보 내역&rsquo;에서 확인할 수 있어요.
+            이용자 제보가 들어오면 원문과 대조해 확인 후 갱신합니다. 반영 결과는
+            &lsquo;내 제보 내역&rsquo;에서 확인할 수 있어요.
           </p>
         </section>
 
@@ -40,8 +39,7 @@ export default function DataPolicyPage() {
             {pools.map((p) => (
               <li
                 key={p.id}
-                className="flex items-center justify-between text-[13px]"
-              >
+                className="flex items-center justify-between text-[13px]">
                 <span className="text-text">{p.name}</span>
                 <span className="text-text-sub">
                   {dayjs(p.updatedAt).format('YYYY.MM.DD')} 확인

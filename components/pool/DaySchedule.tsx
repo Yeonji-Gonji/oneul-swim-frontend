@@ -16,7 +16,15 @@ const DAYS: Array<{ code: DayCode; label: string }> = [
   { code: 6, label: '토' },
   { code: 0, label: '일' },
 ];
-const DOW = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'];
+const DOW = [
+  '일요일',
+  '월요일',
+  '화요일',
+  '수요일',
+  '목요일',
+  '금요일',
+  '토요일',
+];
 const toMin = (hhmm: string) => {
   const [h, m] = hhmm.split(':').map(Number);
   return h * 60 + m;
@@ -55,16 +63,14 @@ export function DaySchedule({ pool }: { pool: Pool }) {
               key={code}
               type="button"
               onClick={() => setSel(code)}
-              className="flex flex-col items-center gap-1.5 py-1.5"
-            >
+              className="flex flex-col items-center gap-1.5 py-1.5">
               <span
                 className={cn(
                   'text-[15px]',
                   active
                     ? 'font-bold text-primary'
                     : 'font-normal text-text-sub',
-                )}
-              >
+                )}>
                 {label}
               </span>
               <span
@@ -90,24 +96,21 @@ export function DaySchedule({ pool }: { pool: Pool }) {
                 className={cn(
                   'flex items-center justify-between rounded-button px-3.5 py-3',
                   isNow ? 'bg-primary-10' : 'bg-surface',
-                )}
-              >
+                )}>
                 <span
                   className={cn(
                     'text-[15px] tabular-nums',
                     isNow
                       ? 'font-bold text-primary-strong'
                       : 'font-normal text-text',
-                  )}
-                >
+                  )}>
                   {s.start} – {s.end}
                 </span>
                 <span
                   className={cn(
                     'text-sm',
                     isNow ? 'text-primary' : 'text-text-sub',
-                  )}
-                >
+                  )}>
                   {[s.pool, tierLabel(s.tier), isNow && '지금']
                     .filter(Boolean)
                     .join(' · ')}

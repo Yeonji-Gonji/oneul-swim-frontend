@@ -9,9 +9,7 @@
 
 import type { NowStatus } from '../lib/pools';
 
-export const statusToToken = (
-  kind: NowStatus['kind'],
-): string => {
+export const statusToToken = (kind: NowStatus['kind']): string => {
   switch (kind) {
     case 'open':
       return 'nowOpen';

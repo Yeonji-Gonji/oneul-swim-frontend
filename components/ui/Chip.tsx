@@ -20,8 +20,7 @@ export function Chip({
         selected
           ? 'bg-primary-fill font-bold text-white'
           : 'border border-line bg-surface font-normal text-text-mute',
-      )}
-    >
+      )}>
       {children}
     </button>
   );

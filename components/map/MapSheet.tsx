@@ -132,22 +132,19 @@ export const MapSheet = forwardRef<
           dragY != null
             ? 'none'
             : 'transform 0.34s cubic-bezier(0.32,0.72,0,1)',
-      }}
-    >
+      }}>
       <div
         className="shrink-0 cursor-grab touch-none pt-2.5 active:cursor-grabbing"
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
-        onPointerCancel={onPointerUp}
-      >
+        onPointerCancel={onPointerUp}>
         <div className="mx-auto h-1 w-10 rounded-full bg-line" />
         <div className="px-5 pt-2 pb-1">{header}</div>
       </div>
       <div
         className="min-h-0 flex-1 overflow-y-auto overscroll-contain px-5"
-        style={{ paddingBottom: `calc(${tabbarH}px + 1rem)` }}
-      >
+        style={{ paddingBottom: `calc(${tabbarH}px + 1rem)` }}>
         {children}
       </div>
     </div>

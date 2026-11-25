@@ -138,8 +138,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
   const sigunguOptions = useMemo(() => {
     if (sido === 'all') return [];
     const set = new Set<string>();
-    for (const p of pools)
-      if (p.sido === sido && p.sigungu) set.add(p.sigungu);
+    for (const p of pools) if (p.sido === sido && p.sigungu) set.add(p.sigungu);
     return [...set].sort();
   }, [pools, sido]);
 
@@ -187,7 +186,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
   const visibleList = listed.slice(0, LIST_CAP);
   // 필터 결과 기준 조회(FR-6, SD-4) — 대상이 필터에서 빠지면 null → 박스 미렌더
   const selectedPool = selectedId
-    ? filteredPools.find((p) => p.id === selectedId) ?? null
+    ? (filteredPools.find((p) => p.id === selectedId) ?? null)
     : null;
   // 필터 변경으로 선택 대상이 결과에서 빠지면 상태도 해제(SD-4) — 렌더 중 보정 패턴
   if (selectedId !== null && selectedPool === null) {
@@ -211,13 +210,21 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
       return;
     }
     setGeo('locating');
-    navigator.geolocation.getCurrentPosition(applyPos, () => setGeo('denied'), GEO_OPTS);
+    navigator.geolocation.getCurrentPosition(
+      applyPos,
+      () => setGeo('denied'),
+      GEO_OPTS,
+    );
   }, [applyPos]);
 
   // 최초 위치 요청 — 콜백에서만 setState(effect 내 동기 setState 회피)
   useEffect(() => {
     if (typeof navigator === 'undefined' || !navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(applyPos, () => setGeo('denied'), GEO_OPTS);
+    navigator.geolocation.getCurrentPosition(
+      applyPos,
+      () => setGeo('denied'),
+      GEO_OPTS,
+    );
   }, [applyPos]);
 
   // 지도 SDK 로드 & 초기화 (1회)
@@ -233,10 +240,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
       kakao.maps.load(() => {
         if (!mapEl.current || mapRef.current) return;
         const map = new kakao.maps.Map(mapEl.current, {
-          center: new kakao.maps.LatLng(
-            DEFAULT_CENTER.lat,
-            DEFAULT_CENTER.lng,
-          ),
+          center: new kakao.maps.LatLng(DEFAULT_CENTER.lat, DEFAULT_CENTER.lng),
           level: DEFAULT_CENTER.level,
         });
         map.setMaxLevel(13); // 줌아웃 상한 = 전국 초기 뷰(FR-7, SD-2)
@@ -456,8 +460,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
       <div
         id="map-filter-stack"
         className="absolute inset-x-0 top-0 z-20 flex flex-col gap-2 px-3"
-        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.75rem)' }}
-      >
+        style={{ paddingTop: 'calc(env(safe-area-inset-top) + 0.75rem)' }}>
         <div className="flex items-center gap-2">
           <label className="glass-panel flex items-center rounded-full py-2 pr-2 pl-4 shadow-card">
             <span className="pr-1.5 text-sm font-bold text-text">지역</span>
@@ -465,8 +468,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
               value={sido}
               onChange={(e) => handleSido(e.target.value)}
               aria-label="지역(시도) 선택"
-              className="bg-transparent text-sm text-text outline-none"
-            >
+              className="bg-transparent text-sm text-text outline-none">
               <option value="all">전국</option>
               {sidoOptions.map((s) => (
                 <option key={s} value={s}>
@@ -481,8 +483,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
                 value={sigungu}
                 onChange={(e) => setSigungu(e.target.value)}
                 aria-label="지역(시군구) 선택"
-                className="bg-transparent text-sm text-text outline-none"
-              >
+                className="bg-transparent text-sm text-text outline-none">
                 <option value="all">{sido} 전체</option>
                 {sigunguOptions.map((s) => (
                   <option key={s} value={s}>
@@ -508,8 +509,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
                   active
                     ? 'bg-primary-fill font-bold text-white'
                     : 'font-medium text-text-mute',
-                )}
-              >
+                )}>
                 {d.label}
               </button>
             );
@@ -530,8 +530,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
                   active
                     ? 'bg-primary-fill font-bold text-white'
                     : 'font-medium text-text-mute',
-                )}
-              >
+                )}>
                 {s.dot && (
                   <span
                     className="size-2 rounded-full"
@@ -549,14 +548,12 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
       {/* 플로팅 컨트롤 (우측) — 내 위치 */}
       <div
         className="absolute right-3 z-20 flex flex-col gap-2"
-        style={{ top: 'calc(env(safe-area-inset-top) + 9.75rem)' }}
-      >
+        style={{ top: 'calc(env(safe-area-inset-top) + 9.75rem)' }}>
         <button
           type="button"
           onClick={recenter}
           aria-label="내 위치로 이동"
-          className="glass-panel flex size-11 items-center justify-center rounded-full shadow-card active:scale-95"
-        >
+          className="glass-panel flex size-11 items-center justify-center rounded-full shadow-card active:scale-95">
           <IconNavigation
             className={cn(
               'size-5',
@@ -594,8 +591,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
               </span>
             )}
           </div>
-        }
-      >
+        }>
         {visibleList.length > 0 ? (
           <ul className="flex flex-col gap-2.5">
             {visibleList.map(({ pool, dist }) => {
@@ -633,8 +629,7 @@ export function MapExplorer({ pools }: { pools: Pool[] }) {
                     <button
                       type="button"
                       onClick={() => handleListTap(pool)}
-                      className={itemClass}
-                    >
+                      className={itemClass}>
                       {content}
                     </button>
                   ) : (

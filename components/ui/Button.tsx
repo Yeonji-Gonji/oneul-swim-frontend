@@ -41,8 +41,7 @@ export function Button({
     <button
       className={cn(buttonClass(variant, { disabled }), className)}
       disabled={disabled}
-      {...rest}
-    >
+      {...rest}>
       {children}
     </button>
   );

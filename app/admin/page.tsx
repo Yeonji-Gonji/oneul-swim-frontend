@@ -81,7 +81,9 @@ export default function AdminPage() {
 
   const loginWithKakao = () => {
     if (!KAKAO_REST_KEY) {
-      setLoginError('카카오 로그인이 구성되지 않았어요(NEXT_PUBLIC_KAKAO_REST_KEY).');
+      setLoginError(
+        '카카오 로그인이 구성되지 않았어요(NEXT_PUBLIC_KAKAO_REST_KEY).',
+      );
       return;
     }
     window.location.href = kakaoAuthorizeUrl(KAKAO_REST_KEY, redirectUri());
@@ -148,8 +150,7 @@ export default function AdminPage() {
           type="button"
           onClick={loginWithKakao}
           disabled={exchanging}
-          className="rounded-button bg-[#FEE500] px-4 py-3 text-sm font-bold text-[#191600] disabled:opacity-50"
-        >
+          className="rounded-button bg-[#FEE500] px-4 py-3 text-sm font-bold text-[#191600] disabled:opacity-50">
           {exchanging ? '로그인 처리 중…' : '카카오로 로그인'}
         </button>
 
@@ -169,8 +170,7 @@ export default function AdminPage() {
             <button
               type="button"
               onClick={saveToken}
-              className="rounded-button border border-line px-4 py-2.5 text-sm font-bold text-text"
-            >
+              className="rounded-button border border-line px-4 py-2.5 text-sm font-bold text-text">
               입력
             </button>
           </div>
@@ -186,8 +186,7 @@ export default function AdminPage() {
         <button
           type="button"
           onClick={clearToken}
-          className="text-xs text-text-sub underline"
-        >
+          className="text-xs text-text-sub underline">
           로그아웃
         </button>
       </div>
@@ -202,8 +201,7 @@ export default function AdminPage() {
               tab === t.key
                 ? 'border-primary bg-primary-fill text-white'
                 : 'border-line bg-surface text-text'
-            }`}
-          >
+            }`}>
             {t.label}
           </button>
         ))}
